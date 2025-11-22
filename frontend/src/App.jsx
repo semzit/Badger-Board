@@ -19,6 +19,8 @@ function App() {
         <Button onClick={async () => {
           const token = await authenticate();
           console.log("Got token:", token);
+          const auth = token.auth;
+          const initialState = token.state;
         }}>
           Authenticate
         </Button>
@@ -27,7 +29,7 @@ function App() {
           const x = document.getElementById("xCoord")?.value;
           const y = document.getElementById("yCoord")?.value;
           const color = document.getElementById("color")?.value;
-          send({ type: "paint" , auth: "", building, x, y, color });
+          const grid_data = send({ type: "paint" , auth: auth, building, x, y, color });
         }}>
           Send Update
         </Button>
