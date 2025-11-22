@@ -1,8 +1,8 @@
 require('dotenv').config();
-const { Client } = require('pg');
+const { Pool } = require('pg');
 
 async function connectToSupabase() {
-  const client = new Client({
+  const pool = new Pool({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,
     database: process.env.DB_NAME,
@@ -10,12 +10,9 @@ async function connectToSupabase() {
     port: process.env.DB_PORT,
   });
 
-  await client.connect();
-
-  const res = await client.query('SELECT * FROM buildings');
-  console.log(res.rows);
+  return pool;
 }
 
 module.exports = {
-    getClient: connectToSupabase
+    pool: connectToSupabase
 };
