@@ -1,23 +1,22 @@
 require('dotenv').config
 const express = require('express');
-const { sql } = require("./db.js");
+const { getClient } = require("./db.js");
 
 const app = express();
 
 const port = process.env.SERVER_PORT;
 
 app.get("/", (req, res) => {
-    const getBuildings = async () => {
-        const buildings = sql`SELECT * FROM buildings`;
+    const doQuery = async () => {        
+        getClient();
 
-        console.log(buildings);
-
-        return buildings;
     };
 
-    getBuildings();
-    
-    res.end();
+    doQuery();
+
+    res.json({
+        msg: "query executed"
+    });
 });
 
 app.listen(port, () => {
