@@ -10,6 +10,13 @@ async function authenticate() {
           body: JSON.stringify({ latitude, longitude })
         });
 
+        /*
+            data = {
+                building: "morg",
+                token: "abcdefg12345", 
+                initialState: { ... }
+            }
+        */
         const data = await res.json();
         if (data.allowed) {
           resolve(data.token);
