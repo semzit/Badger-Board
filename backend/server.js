@@ -7,13 +7,11 @@ const app = express();
 
 const port = process.env.SERVER_PORT;
 
-const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
-  });
+const { pool } = require("./db.js")
+
+const authRoutes = require("./services/authService.js");
+
+app.use(express.json());
 
 app.get("/", (req, res) => {
     const doQuery = async () => {        
@@ -32,6 +30,8 @@ app.get("/", (req, res) => {
         msg: "query executed"
     });
 });
+
+app.use('/auth', authRoutes);
 
 app.listen(port, () => {
     console.log(`Listening on Port ${port}`);
