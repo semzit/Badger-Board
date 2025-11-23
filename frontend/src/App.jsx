@@ -8,7 +8,7 @@ import ColorSelector from './components/ColorSelector'
 import LandingPage from './components/LandingPage'
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch"
 
-import bg from './img/bg.png'
+import bg from './img/fire.gif'
 
 function App() {
   const [selectedColor, setSelectedColor] = useState('#000000')
