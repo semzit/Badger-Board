@@ -1,10 +1,4 @@
 
-/*
-coords = {
-    latitude: number,
-    longitude: number
-}
-*/  
 const getState = (coords) => {
     return /* some sql */;
 }; 
@@ -13,7 +7,7 @@ const updateState = (id, move) => {
     return /* some sql */;
 }
 
-const removeConnection = (id) => {
+const queryBounds = () => {
     return /* some sql */;
 }
 
