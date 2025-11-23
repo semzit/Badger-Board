@@ -10,7 +10,7 @@ import LandingPage from './components/LandingPage'
 import BuildingForm from './components/BuildingForm'
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch"
 
-import bg from './img/bg.png'
+import bg from './img/space.gif'
 
 function BadgerBoard() {
   const [selectedColor, setSelectedColor] = useState('#000000')
