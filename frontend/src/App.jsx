@@ -5,7 +5,8 @@ import { authenticate } from './services/restService'
 import './App.css'
 import Screen from './components/Screen'
 import ColorSelector from './components/ColorSelector'
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import LandingPage from './components/LandingPage'
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch"
 
 import bg from './img/bg.png'
 
@@ -13,8 +14,18 @@ function App() {
   const [selectedColor, setSelectedColor] = useState('#000000')
   const [auth, setAuth] = useState(null)
   const [building, setBuilding] = useState('morgridge-hall')
+  const [showLanding, setShowLanding] = useState(true)
+  const [isExiting, setIsExiting] = useState(false)
 
   const { isConnected, message, send } = useWebSocket('ws://localhost:8080/ws')
+
+  const handleEnterCanvas = () => {
+    setIsExiting(true)
+    // Wait for animation to complete before hiding landing page
+    setTimeout(() => {
+      setShowLanding(false)
+    }, 1500)
+  }
 
   return (
     <div className="bg-image" style={{
@@ -25,6 +36,11 @@ function App() {
       backgroundPosition: "center",
       backgroundRepeat: "no-repeat",
       }}>
+
+      {/* Landing Page Overlay */}
+      {showLanding && (
+        <LandingPage onEnter={handleEnterCanvas} isExiting={isExiting} />
+      )}
 
       <TransformWrapper
         doubleClick={{ step: 0 }}
