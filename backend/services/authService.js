@@ -12,7 +12,7 @@ const port = process.env.SERVER_PORT;
 
 
 /**
- * authentica the user based on gps coordinates
+ * authenticate the user based on gps coordinates
  * req.body = {
  *   coords: {
  *     latitude: number,

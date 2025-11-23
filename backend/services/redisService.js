@@ -23,7 +23,7 @@ async function getRedis(buildingId) {
         array.push(JSON.parse(row));
     }
     return array;
-}
+}; 
 
 // make changes to redis data
 async function updateRedis(buildingId, update) {
@@ -37,13 +37,13 @@ async function updateRedis(buildingId, update) {
     rowArray[x] = color;
 
     await client.set(rowKey, JSON.stringify(rowArray));
-}
+}; 
 
 // load data to redis
 async function loadRedis(buildingId, data) {
     for (let i = 0; i < data.length; i++) {
         await client.set(`building:${buildingId}:row:${i}`, JSON.stringify(data[i])); 
     }; 
-}
+}; 
 
 export {getRedis, updateRedis, loadRedis}; 
