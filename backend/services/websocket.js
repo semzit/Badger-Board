@@ -1,49 +1,80 @@
-import WebSocket, { WebSocketServer } from "ws";
-import { removeConnection,  } from "";
-const { updateRedis } = require('./redisService.js')
+const WebSocket = require('ws');
+const { updateRedis } = require('./redisService.js');
 
-const wss = new WebSocketServer({ port: 8080 });
+// 1. Setup the WebSocket Server
+const wss = new WebSocket.Server({ port: 8080 });
 
-wss.on("connection", (ws, req) => { 
-    console.log("New client connected");
-    
+// Track which building each connected socket belongs to
+// Map<WebSocket, String (BuildingID)>
+const socketToBuilding = new Map();
 
-    ws.on("message", (message) => {
-        console.log(`Received message: ${message}`);
-        
-        const data = JSON.parse(message);
-        const uuid = data.id;
-        const type = data.type;  
-        const color = data.color;
-        const {x, y} = data.place;
+// --- MOCK DATABASE LOGIC (Abstracted as requested) ---
+const db = {
+    // Looks up which building a user belongs to
+    getBuildingForUser: async (userId) => {
+        // In reality: await pool.query('SELECT building_id FROM users WHERE id = $1', [userId])
+        // Mocking return value:
+        return "building_1"; 
+    }
+};
+// ----------------------------------------------------
 
+wss.on('connection', (ws) => {
+    console.log('New client connected');
 
-        if (type === "paint") {
-            updateState(uuid, {x, y, color});
-            broadcast(message);
-        } else  {
-            ws.send("Unknown message type");
+    ws.on('message', async (messageStr) => {
+        try {
+            const message = JSON.parse(messageStr);
+
+            // 1: PAINT Logic
+            if (message.type === 'PAINT') {
+                await handlePaintRequest(ws, message);
+            }
+
+        } catch (e) {
+            console.error("Error processing message:", e);
         }
+    });
 
-        ws.send(`Server received: ${message}`);
-    }); 
-
-    ws.on("close", () => {
-        console.log("Client disconnected");
-        removeConnection (ws.id);
-    }); 
-
+    ws.on('close', () => {
+        // Clean up map when user leaves
+        socketToBuilding.delete(ws);
+    });
 });
 
+async function handlePaintRequest(ws, data) {
+    const { x, y, value, userId } = data;
 
-/**
- * Broadcast message to all connected clients
- */
-function broadcast(msg) {
-  const str = JSON.stringify(msg);
-  wss.clients.forEach(client => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(str);
-    }
-  });
+    // A. Server looks up building using identifier
+    const buildingId = await db.getBuildingForUser(userId); //SQL
+    
+    // Associate this connection with the building (useful for broadcasting later)
+    socketToBuilding.set(ws, buildingId);
+
+    // B. Server updates that block in server-side grid  // redis
+    const update = {x, y, color: value};
+    await updateRedis(buildingId, update);  
+
+    // C. UPDATE Logic: Broadcast to all clients in the SAME building
+    broadcastUpdate(buildingId, x, y, value);
 }
+
+function broadcastUpdate(targetBuildingId, x, y, value) {
+    const updateMsg = JSON.stringify({
+        type: 'UPDATE',
+        x: x,
+        y: y,
+        value: value
+    });
+
+    wss.clients.forEach((client) => {
+        // Only send if client is open AND in the same building
+        const clientBuilding = socketToBuilding.get(client);
+
+        if (client.readyState === WebSocket.OPEN && clientBuilding === targetBuildingId) {
+            client.send(updateMsg);
+        }
+    });
+}
+
+console.log("WebSocket server started on port 8080");

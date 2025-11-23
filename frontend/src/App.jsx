@@ -76,30 +76,6 @@ function App() {
         selectedColor={selectedColor}
         onColorSelect={setSelectedColor}
       />
-      <Button onClick={async () => {
-          const token = await authenticate()
-          console.log('Got token:', token)
-          setAuth(token.auth)
-          const initialState = token.state
-        }}>
-          Authenticate
-        </Button>
-
-        <Button onClick={() => {
-          const x = document.getElementById('xCoord')?.value
-          const y = document.getElementById('yCoord')?.value
-          const color = selectedColor
-          const grid_data = send({ 
-            type: 'paint', 
-            auth: auth, 
-            building: building, 
-            x, 
-            y, 
-            color 
-          })
-        }}>
-          Send Update
-        </Button>
       </div>
     </div>
   )

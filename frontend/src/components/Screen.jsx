@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+//import {PwebsocketConnectionString} from '../../.env'
 import './Screen.css'
 
 function Screen({ selectedColor }) {
@@ -41,7 +42,8 @@ function Screen({ selectedColor }) {
             y: y,
             value: colorValue
         };
-        
+        console.log("Sending paint:", payload);
+
         ws.current.send(JSON.stringify(payload));
         
         // Optimistic update: Update local state immediately for better UX
@@ -83,17 +85,17 @@ function Screen({ selectedColor }) {
 
     // Connect to the server
 
-    ws.current = new WebSocket('ws://localhost:8080');
+    ws.current = new WebSocket(import.meta.env.VITE_PwebsocketConnectionString);
 
     // Connection Opened
     ws.current.onopen = () => {
-      console.log("Connected to Paint Server");
+      console.log("Connected to Server");
       setIsConnected(true);
     };
 
     // Connection Closed
     ws.current.onclose = () => {
-      console.log("Disconnected from Paint Server");
+      console.log("Disconnected from Server");
       setIsConnected(false);
     };
 
