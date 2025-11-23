@@ -83,6 +83,8 @@ function Screen({ selectedColor }) {
 
     callApi();
 
+    // Check if we got a response with userId. If we did, initiate the connection, else return error screen.
+
     // Connect to the server
 
     ws.current = new WebSocket(import.meta.env.VITE_PwebsocketConnectionString);

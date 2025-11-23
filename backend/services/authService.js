@@ -3,13 +3,12 @@ const express = require('express');
 const crypto = require('crypto');
 const { pool } = require("../db.js");
 const { getState } = require("./database.js");
-const authRouter = express.Router();
+const authRoutes = express.Router();
 
 const app = express();
 app.use(express.json());
 
-const port = process.env.SERVER_PORT;
-
+const usersForBuilding = {};
 
 /**
  * authenticate the user based on gps coordinates
@@ -24,10 +23,11 @@ const port = process.env.SERVER_PORT;
  *   building: string
  *   state: string
  */ 
-authRouter.post("/", (req, res) => {
+authRoutes.post("/", (req, res) => {
     const coords = req.body.coords;
     const query = `
     SELECT 
+        b.id,
         b.name, 
         c.content_data
     FROM 
@@ -65,6 +65,8 @@ authRouter.post("/", (req, res) => {
 
         const id = crypto.randomUUID();
 
+        usersForBuilding[query_res.id] = id;
+
         res.send({
             id: id,
             building: query_res.name,
@@ -74,4 +76,7 @@ authRouter.post("/", (req, res) => {
     });
 });
 
-module.exports = authRouter;
+module.exports = {
+    authRoutes,
+    usersForBuilding
+};
