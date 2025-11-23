@@ -4,6 +4,10 @@
   position: relative;
 }
 
+.pixel:hover {
+    border: 1px solid black;
+}
+
 .ripple {
   position: absolute;
   top: 50%;
