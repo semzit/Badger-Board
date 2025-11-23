@@ -47,7 +47,7 @@ authRouter.post("/", (req, res) => {
 
     // Executes query
 
-    pool.query(query, ...coords, (err, qres) => {
+    pool.query(query, coords, (err, qres) => {
         if (err) {
             res.status(500).json({
                 message: "Query failed"
@@ -55,34 +55,36 @@ authRouter.post("/", (req, res) => {
         } else {
             const obj = qres.rows;
 
-            console.log(obj);
+            query_res = obj[0];
+
+            if (!query_res) {
+                res.status(401).json({
+                    success: false,
+                    status: 401,
+                    message: "Invalid Location"
+                });
+            }
+
+        const id = crypto.randomUUID();
+    
+        const state = new Array(100);
+
+        for (let i = 0; i < 100; i++) {
+            state[i] = new Array(100);
         }
-    });
 
-    // Check if query returned nothing, if so send an error response
+        for (let i = 0; i < 100; i++) {
+            for (let j = 0; j < 100; j++) {
+                state[i][j] = [query_res.red_channel[i][j], query_res.green_channel[i][j], query_res.blue_channel[i][j]];
+            }
+        }
 
-    if (!query_res) {
-        res.status(401).json({
-            success: false,
-            status: 401,
-            message: "Invalid Location"
+        res.send({
+            id: id,
+            building: query_res.name,
+            state: state
         });
     }
-
-    // Else, generate uuid auth token
-
-    const id = crypto.randomUUID();
-    
-    // Write building and id pair to database
-
-    // Establish Web Socket connection with client
-
-    // Return response containing initial state, building name, and auth token
-
-    res.send({
-        id: id,
-        building: building,
-        state: state
     });
 });
 
