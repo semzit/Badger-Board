@@ -22,9 +22,6 @@ client.on('error', err => console.log('Redis Client Error', err));
 })();
 
 
-
-
-
 // get data from redis 
 async function getRedis(buildingId) {
     const array = [];
