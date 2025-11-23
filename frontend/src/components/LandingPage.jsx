@@ -56,7 +56,7 @@ function LandingPage({ onEnter, isExiting }) {
             paddingBottom: '0.2rem'
           }}
         >
-          Morgridge Hall
+          Badger Board
         </h1>
         <h2
           style={{
@@ -66,8 +66,19 @@ function LandingPage({ onEnter, isExiting }) {
             fontWeight: '300'
           }}
         >
-          Pixel Canvas
+          You are connected to
         </h2>
+        <h3
+          style={{
+            fontSize: '2.0rem',
+            fontWeight: 'bold',
+            marginBottom: '2rem',
+            background: 'linear-gradient(135deg, #c5050c 0%, #ff5555 100%)',
+            backgroundClip: 'text',
+          }}
+        >
+            Morgridge Hall
+        </h3>
         <p
           style={{
             fontSize: '1.1rem',
@@ -77,7 +88,9 @@ function LandingPage({ onEnter, isExiting }) {
             lineHeight: '1.6'
           }}
         >
-          Collaborate with others in your building to create pixel art together
+          1. Only users within the building can access this canvas, and this is the only canvas they can access.<br/>
+          2. No hate symbols, harassment, or explicit imagery.<br/>
+          3. Have fun!
         </p>
         <Button
           variant="primary"
