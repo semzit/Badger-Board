@@ -60,7 +60,7 @@ function Screen({ selectedColor }) {
       let res;
 
       try {
-        res = {userId:0 , initState: [[]]}; // Dummy data, we will have an awaited API call
+        res = {userId:0 , initState: Array(10000).fill('rgb(255, 255, 255)')}; // Dummy data, we will have an awaited API call
       } catch(e) {
         console.log(e);
       }

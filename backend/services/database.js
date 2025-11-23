@@ -1,4 +1,4 @@
-
+// 
 const getState = (coords) => {
     return /* some sql */;
 }; 
