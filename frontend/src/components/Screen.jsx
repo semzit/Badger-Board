@@ -141,7 +141,7 @@ function Screen({ selectedColor }) {
 
       sendPaint(i/100, i%100, selectedColor || 'black');
       
-      setRipple({ index: i, id: Date.now() });
+      setRipple({ index: i, id: crypto.randomUUID() });
     }
   };
 
