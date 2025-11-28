@@ -1,11 +1,23 @@
 {
   "dependencies": {
+    "express": "^5.1.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7",
     "typescript": "^5.9.3",
+    "websocket": "^1.0.35",
     "yarn": "^1.22.22"
+  },
+  "scripts": {
+    "build" : "tsc",
+    "start": "node build/server.js"
   },
   "name": "backend",
   "version": "1.0.0",
   "main": "index.js",
   "author": "Semo Zitouni",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/express": "^5.0.5",
+    "@types/sqlite3": "^5.1.0"
+  }
 }
