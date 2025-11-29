@@ -1,8 +1,8 @@
-import { serialize1d, serialize2d, deserialize } from "../serialize/serialize";
+import { serialize1d, serialize2d, deserialize } from "./serialize";
 import { initData } from "../types/types";
-
 import sqlite3  from "sqlite3";
 import { Database, open } from "sqlite";
+import { error } from "console";
 
 export const buildDb =  async() => {
 
@@ -30,7 +30,7 @@ export const buildDb =  async() => {
   const initialData : initData = {
     building1 : {building : 'morgridge' , board : twoInit, coords : oneInit}, 
     building2 : {building : 'concord' , board : twoInit, coords : oneInit}
-  }
+  }; 
 
   const buildDb : string = `
     INSERT OR REPLACE INTO boards (building, board, coords) VALUES 
@@ -49,7 +49,7 @@ export const buildDb =  async() => {
   ]); 
   
   return db; 
-}
+}; 
 
 export const updateDb = (db:Database , building : string, board : number[][]) => {
   const blob = serialize2d(board); 
@@ -57,7 +57,7 @@ export const updateDb = (db:Database , building : string, board : number[][]) =>
   const update =  `UPDATE boards SET board = ? WHERE building = ?`;
 
   db.run(update, [blob, building]); 
-}
+}; 
 
 export const readDb = async(db:Database, building: string) : Promise<number[][]> => {
   const get = `SELECT board FROM boards WHERE building =?`;
@@ -65,10 +65,10 @@ export const readDb = async(db:Database, building: string) : Promise<number[][]>
   const boardSerialized =  await db.get(get, [building]);
   
   if (boardSerialized){
-    const boardDeserialized : number[][] = deserialize(boardSerialized);   
+    const boardDeserialized : number[][] = deserialize(boardSerialized);
+    return boardDeserialized;    
   }else{
     console.error("[DB] error reading database"); 
+    throw error("[DB error reading database]"); 
   }
-
-  return boardSerialized; 
-}
+}; 

@@ -7,8 +7,8 @@ export function serialize2d(grid: number[][]): Buffer {
 }
 
 export function deserialize(buffer: Buffer): number[][]{
-    const rows: number = process.env.ROWS ?  parseInt(process.env.ROWS) : 0;
-    const cols: number = process.env.COLS ?  parseInt(process.env.COLS) : 0;
+    const rows: number = process.env.ROWS ?  parseInt(process.env.ROWS) : 100;
+    const cols: number = process.env.COLS ?  parseInt(process.env.COLS) : 100;
     
     const flatArray = Array.from(buffer); 
     const grid : number[][] = []; 
