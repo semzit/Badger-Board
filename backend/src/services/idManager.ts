@@ -2,15 +2,11 @@ import { idHolder } from "../types/types";
 
 const idHolder : idHolder = new Map(); 
 
-export const getBuilding = (id : string) : string => {
+export const findBuilding = (id : string) : string | undefined => {
     const building = idHolder.get(id); 
-    if (building === undefined){
-        throw new Error("[ID] Id not found in idHolder"); 
-    }
     return building; 
 }
 
-export const setBuilding = (id : string , building: string) => {
+export const setId = (id : string , building: string) => {
     idHolder.set(id, building); 
 }
-

@@ -1,3 +1,6 @@
+import { insidePolygon, LatLon } from "geolocation-utils";
+import { coords } from "../types/types";
+
 function success(pos : any) {
   const crd = pos.coords;
 
@@ -18,4 +21,8 @@ export const getGPS = () => {
         navigator.geolocation.getCurrentPosition(success, error); 
     }
     return success; 
+}
+
+export const validCoords = (cords : LatLon, coords2 : coords) => {
+    return insidePolygon(cords, coords2); 
 }

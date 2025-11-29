@@ -4,9 +4,10 @@ import sqlite3  from "sqlite3";
 import { Database, open } from "sqlite";
 import { error } from "console";
 
-export const buildDb =  async() => {
+let db : Database; 
 
-  const db = await open({
+export const buildDb =  async() => {
+  db = await open({
     filename : `./database.db`,
     driver : sqlite3.Database,
   }); 
@@ -47,19 +48,17 @@ export const buildDb =  async() => {
     initialData.building2.board, 
     initialData.building2.coords
   ]); 
-  
-  return db; 
 }; 
 
-export const updateDb = (db:Database , building : string, board : number[][]) => {
+export const updateDb = async(building : string, board : number[][]) => {
   const blob = serialize2d(board); 
 
   const update =  `UPDATE boards SET board = ? WHERE building = ?`;
 
-  db.run(update, [blob, building]); 
+  await db.run(update, [blob, building]); 
 }; 
 
-export const readDb = async(db:Database, building: string) : Promise<number[][]> => {
+export const readDb = async(building: string) : Promise<number[][]> => {
   const get = `SELECT board FROM boards WHERE building =?`;
   
   const boardSerialized =  await db.get(get, [building]);
