@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { buildingForCoords, findBoard } from "../services/boardManager";
+import { buildingForCoords, findBoard, setBuilding } from "../services/boardManager";
 import { findBuilding, setId } from "../services/idManager";
 import { randomUUID } from "crypto";
 import { auth } from "../types/types";
-import { toLatLon } from "geolocation-utils"
+import { LatLon, toLatLon } from "geolocation-utils"
+import { loadBoard } from "../services/dbService";
 
 export const getBoard = (req : Request, res: Response, next : NextFunction) => {
     try{
@@ -55,24 +56,31 @@ export const health = (req: Request, res: Response, next : NextFunction) => {
 export const setBoard = (req: Request, res: Response, next : NextFunction) => {
     try{
         console.log("setBoard request received");
-        let { coords } = req.body;
-        console.log(req.body); 
-        coords = toLatLon([coords.latitude, coords.longitude])
-        const building =  buildingForCoords(coords);
-        console.log("Authenticate request received"); 
-        if (building){
-            const uuid : string = randomUUID();  
-            setId(uuid, building); 
-            const json : auth = {
-                id : uuid
-            }; 
-            console.log(`sent: ${JSON.stringify(json)}`);
-            res.status(201)
-        }else{
-            console.log("[Controller] setBoard error"); 
-            res.status(404)  // no id created send to no accessable page
+        const { boardName, board } = req.body;
+
+        const {boardVals, coords} = board; 
+
+        console.log(coords)
+        // load board into the database
+        // convert coords to latLot and add to DB and board manager
+        const latLons : LatLon[] = [];
+        for (let i = 0 ; i < coords.length ; i ++){
+            latLons.push(toLatLon([coords[i][0], coords[i][1]])); 
         }
+
+        loadBoard(boardName, boardVals, coords); 
+
+        setBuilding(boardName,
+            {
+                board : boardVals,
+                coords : coords
+            }
+        ); 
+        
+        console.log("Authenticate request received"); 
+    
     }catch(error){
+        console.log('[Controller] Set board error'); 
         next(error); 
     }
 }; 

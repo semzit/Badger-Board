@@ -15,9 +15,9 @@ async function main(){
         //await readDb(); 
 
 
-        const concordInfo : board = await readDb("concord"); 
+        //const concordInfo : board = await readDb("concord"); 
 
-        await setBuilding("concord", concordInfo); 
+        //await setBuilding("concord", concordInfo); 
 
        start();
        

@@ -9,7 +9,7 @@ try{
       [39.936286135844675, -86.78525285118228]
     ]; 
 
-    mes = {
+    const mess = {
         boardName : "tri sig", 
         board : {
             board  : boardInit, 
@@ -17,17 +17,17 @@ try{
         }
     }
 
-    res = await fetch(
+    await fetch(
         `http://localhost:8080/api/init/setBoard`, 
         {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json' // Tell the server we are sending JSON
-        },
-        body: JSON.stringify(mess)
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json' // Tell the server we are sending JSON
+            },
+            body: JSON.stringify(mess)
         }
     )
 
 } catch(e) {
-console.log(e);
+    console.log(e);
 }

@@ -1,4 +1,3 @@
-import { serialize1d, serialize2d,deserializeCoords2d, deserialize1d, deserialize2d } from "./serialize";
 import { board, initData } from "../types/types";
 import sqlite3  from "sqlite3";
 import { Database, open } from "sqlite";
@@ -16,45 +15,26 @@ export const buildDb =  async() => {
   const creatDBschema : string = `
   CREATE TABLE IF NOT EXISTS boards (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    building TEXT NOT NULL, 
-    board TEXT NOT NULL,
-    coords TEXT NOT NULL 
+    building TEXT, 
+    board TEXT,
+    coords TEXT  
   );
   `; 
 
   await db.exec(creatDBschema);  
+}; 
+ 
+export const loadBoard = async(building : string, board : number[][], coords: number[][]) => {
+  const boardString = JSON.stringify(board); 
+  const coordString = JSON.stringify(coords); 
 
-  const boardInit: number[][] = Array(100).fill(0).map(() => Array(100).fill(0));
-
-  const coordInit = [
-      [45.6581812088617, -94.6197712462103], 
-      [45.36719016965179, -82.90951936954298], 
-      [40.591149344196786, -93.84462454988244],
-      [39.936286135844675, -86.78525285118228]
-    ]; 
-    
-  const initialData : initData = {
-    building1 : {building : 'morgridge' , board : JSON.stringify(boardInit), coords : JSON.stringify(coordInit)}, 
-    building2 : {building : 'concord' , board : JSON.stringify(boardInit), coords : JSON.stringify(coordInit)}
-  }; 
-
-  const buildDb : string = `
+  const update : string =  `
     INSERT OR REPLACE INTO boards (building, board, coords) VALUES 
       (?, ?, ?)
-  `;  
+  `;
 
-  await db.run(buildDb, [
-    initialData.building1.building, 
-    initialData.building1.board, 
-    initialData.building1.coords, 
-  ]);
-
-  await db.run(buildDb, [
-    initialData.building2.building, 
-    initialData.building2.board, 
-    initialData.building2.coords, 
-  ]);
-}; 
+  await db.run(update, [building, boardString, coordString]); 
+}
 
 export const updateDb = async(building : string, board : number[][]) => {
   const boardString = JSON.stringify(board); 
