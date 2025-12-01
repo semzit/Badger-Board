@@ -9,7 +9,6 @@ export const getBoard = (req : Request, res: Response, next : NextFunction) => {
     try{
         console.log("Get board request received"); 
         const id : string = req.params.id;  
-        console.log(`id: ${id}`); 
         const building = findBuilding(id) ; 
         if (building ){
             const board = findBoard(building);
@@ -48,6 +47,31 @@ export const health = (req: Request, res: Response, next : NextFunction) => {
     try{
         console.log("Health request received"); 
         res.status(200).json({hello: "hi"}) ; 
+    }catch(error){
+        next(error); 
+    }
+}; 
+
+export const setBoard = (req: Request, res: Response, next : NextFunction) => {
+    try{
+        console.log("setBoard request received");
+        let { coords } = req.body;
+        console.log(req.body); 
+        coords = toLatLon([coords.latitude, coords.longitude])
+        const building =  buildingForCoords(coords);
+        console.log("Authenticate request received"); 
+        if (building){
+            const uuid : string = randomUUID();  
+            setId(uuid, building); 
+            const json : auth = {
+                id : uuid
+            }; 
+            console.log(`sent: ${JSON.stringify(json)}`);
+            res.status(201)
+        }else{
+            console.log("[Controller] setBoard error"); 
+            res.status(404)  // no id created send to no accessable page
+        }
     }catch(error){
         next(error); 
     }

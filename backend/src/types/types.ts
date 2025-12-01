@@ -31,6 +31,11 @@ export type board = {
     coords : LatLon[]
 }; 
 
+export type setBoard = {
+    boardName : string, 
+    board : board
+}
+
 export type id = string; 
 
 export type building = string; 
