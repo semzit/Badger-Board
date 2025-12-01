@@ -3,36 +3,51 @@ import { buildingForCoords, findBoard } from "../services/boardManager";
 import { findBuilding, setId } from "../services/idManager";
 import { randomUUID } from "crypto";
 import { auth } from "../types/types";
+import { toLatLon } from "geolocation-utils"
 
 export const getBoard = (req : Request, res: Response, next : NextFunction) => {
     try{
-        const { id } = req.body; 
-        const building = findBuilding(id); 
-        if (building === undefined){
-            throw new Error("[Controller] building not found for id")
+        console.log("Get board request received"); 
+        const id : string = req.params.id;  
+        console.log(`id: ${id}`); 
+        const building = findBuilding(id) ; 
+        if (building ){
+            const board = findBoard(building);
+            res.json(board)
         }
-        res.json(JSON.stringify(findBoard(building)))
     }catch (error){
         next(error); 
     }
 }; 
 
-
 export const authenticate = (req: Request, res: Response, next : NextFunction) => {
     try{
-        const { coords } = req.body; 
-        const building =  buildingForCoords(coords)
-        
+        let { coords } = req.body;
+        console.log(req.body); 
+        coords = toLatLon([coords.latitude, coords.longitude])
+        const building =  buildingForCoords(coords);
+        console.log("Authenticate request received"); 
         if (building){
             const uuid : string = randomUUID();  
             setId(uuid, building); 
             const json : auth = {
                 id : uuid
             }; 
+            console.log(`sent: ${JSON.stringify(json)}`);
             res.status(201).json(json);
         }else{
+            console.log("[Controller] building not found for coords"); 
             res.status(404)  // no id created send to no accessable page
         }
+    }catch(error){
+        next(error); 
+    }
+}; 
+
+export const health = (req: Request, res: Response, next : NextFunction) => {
+    try{
+        console.log("Health request received"); 
+        res.status(200).json({hello: "hi"}) ; 
     }catch(error){
         next(error); 
     }

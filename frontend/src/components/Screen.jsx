@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 //import {PwebsocketConnectionString} from '../../.env'
 import './Screen.css'
+import WebSocket from "isomorphic-ws";
 
 function Screen({ selectedColor }) {
   const [pixels, setPixels] = useState(Array(100 * 100).fill('rgb(255, 255, 255)'))
@@ -10,9 +11,10 @@ function Screen({ selectedColor }) {
   const pixelSize = 10;
 
   const [userId, setUserId] = useState(0);
+  const userIdRef = useRef(null); 
 
+//  let userId; 
   // 1. State for the grid data (mapping "x,y" keys to color strings)
-
   // State for connection status
   const [isConnected, setIsConnected] = useState(false);
   
@@ -22,12 +24,13 @@ function Screen({ selectedColor }) {
 
   // 4. Handle incoming updates from the server
     const handleUpdateMessage = (data) => {
-        const { x, y, value } = data;
+        console.log("update received"); 
+        const { x, y, color } = data;
 
         // Functional state update to ensure we have the latest previous state
         setPixels(prevPixels => {
             const copy = [...prevPixels];
-            copy[x*100+y] = value;
+            copy[x*100+y] = color;
             return copy;
         });
     };
@@ -35,15 +38,14 @@ function Screen({ selectedColor }) {
     // 5. Send paint command to server
     const sendPaint = (x, y, colorValue) => {
         if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-        const payload = {
-            type: 'PAINT',
-            userId: userId,
-            x: x,
-            y: y,
-            value: colorValue
+          const uid = userIdRef.current; 
+          const payload = {
+          userId: uid,
+          x: x,
+          y: y,
+          color: colorValue
         };
         console.log("Sending paint:", payload);
-
         ws.current.send(JSON.stringify(payload));
         
         // Optimistic update: Update local state immediately for better UX
@@ -57,63 +59,89 @@ function Screen({ selectedColor }) {
   // 3. Effect to Initialize WebSocket Connection
   useEffect(() => {
     // Send auth request to backend server, store userId
-
     const callApi = async () => {
-      console.log('api called');
       let res;
-      let data;
-
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          data = [position.longitude, position.latitude];
-        }, (error) => {
-          alert("Error getting coords");
+      let crd;
+      
+      function getLocation() {
+         return new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
         });
-      } else {
-        alert("Geolocation is not supported by this browser.");
       }
+      
+      crd = await getLocation(); 
 
+      console.log( `data: ${JSON.stringify(crd)}`);
+
+
+      // get valid id 
       try {
-        res = fetch(
-          import.meta.env.VITE_tokenEndpoint,
+        res = await fetch(
+          'http://localhost:8080/api/init',
           {
             method: "POST",
             headers: {
               'Content-Type': 'application/json' // Tell the server we are sending JSON
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(crd)
           }
         );
       } catch(e) {
         console.log(e);
       }
+      
+      let json = await res.json(); 
 
-      const {userId, initState} = res;
+      console.log(json.id);
+      setUserId(json.id);
+      userIdRef.current = json.id;
 
-      console.log(initState);
 
-      const temp = [];
+      // let json = await res.json();
+      // console.log(JSON.stringify(json)); 
+      // const userId =  json.id; 
+      // console.log(userId.id); 
 
-      for (let i = 0; i < 100; i++) {
-        for (let j = 0; j < 100; j++) {
-          temp.append(initState[i][j]);
-        }
+      // get curret board 
+      try{
+        res = await fetch(
+          `http://localhost:8080/api/init/${json.id}`
+        )
+
+      } catch(e) {
+        console.log(e);
       }
+
+      const json2 = await res.json(); 
+
+      const initState = json2.board; 
+      
+      console.log(`initState: ${initState}`);
+      // const temp = [];
+
+      // for (let i = 0; i < 100; i++) {
+      //   for (let j = 0; j < 100; j++) {
+      //     temp.push(initState[i][j]);
+      //   }
+      // }
+
+      const temp = json2.board.flat(); 
 
       console.log('temp');
 
+
       setPixels(temp);
-      setUserId(userId);
     }
 
     callApi();
+  }, []); 
 
+  useEffect(() => {
     // Check if we got a response with userId. If we did, initiate the connection, else return error screen.
 
     // Connect to the server
 
-    ws.current = new WebSocket(import.meta.env.VITE_PwebsocketConnectionString);
-
+    ws.current = new WebSocket('ws://localhost:8081/');
     // Connection Opened
     ws.current.onopen = () => {
       console.log("Connected to Server");
@@ -128,11 +156,10 @@ function Screen({ selectedColor }) {
 
     ws.current.onmessage = (event) => {
       try {
+        console.log("websocket message received")
         const data = JSON.parse(event.data);
-
-        if (data.type === 'UPDATE') {
-          handleUpdateMessage(data);
-        }
+        handleUpdateMessage(data);
+        
       } catch (e) {
         console.error("Failed to parse incoming message", e);
       }
@@ -145,9 +172,8 @@ function Screen({ selectedColor }) {
       }
     };
   }, []);
-
-    // Message Received
-
+    
+  // Message Received
   const handleMouseDown = () => {
     setClicked(true);
     setMouseMoved(false);
@@ -168,7 +194,7 @@ function Screen({ selectedColor }) {
         return copy;
       });
 
-      sendPaint(i/100, i%100, selectedColor || 'black');
+      sendPaint(Math.floor(i/100), i%100, selectedColor || 'black');
       
       setRipple({ index: i, id: crypto.randomUUID() });
     }

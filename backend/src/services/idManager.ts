@@ -1,12 +1,16 @@
 import { idHolder } from "../types/types";
 
-const idHolder : idHolder = new Map(); 
+const idH : idHolder = new Map(); 
 
 export const findBuilding = (id : string) : string | undefined => {
-    const building = idHolder.get(id); 
+    const building = idH.get(id); 
     return building; 
 }
 
 export const setId = (id : string , building: string) => {
-    idHolder.set(id, building); 
+    idH.set(id, building); 
+}
+
+export const readIDHOLDER = () =>{
+    console.log(idH); 
 }

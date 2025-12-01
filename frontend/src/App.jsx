@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
-import { useWebSocket } from './hooks/webHooks';
 import { authenticate } from './services/restService';
 import './App.css';
 import Screen from './components/Screen';
@@ -19,7 +18,7 @@ function BadgerBoard() {
   const [showLanding, setShowLanding] = useState(true)
   const [isExiting, setIsExiting] = useState(false)
 
-  const { isConnected, message, send } = useWebSocket('ws://localhost:8080/ws')
+  //const { isConnected, message, send } = useWebSocket('ws://localhost:8080/ws')
 
   const handleEnterCanvas = () => {
     setIsExiting(true)
@@ -102,7 +101,8 @@ function BadgerBoard() {
         selectedColor={selectedColor}
         onColorSelect={setSelectedColor}
       />
-      <Button onClick={async () => {
+      
+      {/**<Button onClick={async () => {
           const token = await authenticate()
           console.log('Got token:', token)
           setAuth(token.auth)
@@ -125,7 +125,8 @@ function BadgerBoard() {
           })
         }}>
           Send Update
-        </Button>
+        </Button> */ }
+
       </div>
     </div>
   )

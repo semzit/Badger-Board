@@ -1,8 +1,8 @@
 import { LatLon } from "geolocation-utils";
 
 export type initData = {
-    building1 : {building : string, board : Buffer, coords: Buffer},
-    building2 : {building : string, board : Buffer, coords: Buffer}
+    building1 : {building : string, board : string, coords: string},
+    building2 : {building : string, board : string, coords: string}
 }; 
 
 export type auth = {
@@ -14,7 +14,13 @@ export type getBoard = {
 }; 
 
 export type wsWrite = {
-    id : string, 
+    userId : string, 
+    x : number, 
+    y : number, 
+    color : number
+}; 
+
+export type update = {
     x : number, 
     y : number, 
     color : number
@@ -25,11 +31,15 @@ export type board = {
     coords : LatLon[]
 }; 
 
-export type boardHolder = Map<string, board>; 
-
-export type idHolder = Map<string, string>; 
+export type id = string; 
 
 export type building = string; 
+
+export type clientHolder = Map<id, any>; 
+
+export type boardHolder = Map<building, board>; 
+
+export type idHolder = Map<id, building>;
 
 /**
  * coords example
