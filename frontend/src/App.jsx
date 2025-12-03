@@ -7,6 +7,7 @@ import Screen from './components/Screen';
 import ColorSelector from './components/ColorSelector';
 import LandingPage from './components/LandingPage';
 import BuildingForm from './components/BuildingForm';
+import OutsideRegion from './components/OutsideRegion'
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 import bg from './img/new_bg.png'
@@ -138,6 +139,7 @@ function App() {
       <Routes>
         <Route path="/" element={<BadgerBoard />} />
         <Route path="/admin" element={<BuildingForm />} />
+        <Route path="/outside" element={<OutsideRegion />} />
       </Routes>
     </BrowserRouter>
   )

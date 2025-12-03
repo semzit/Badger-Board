@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { Form, Button, Container, Row, Col, Card, Alert } from 'react-bootstrap'
+import { useNavigate, Link } from 'react-router'
 
 function BuildingForm() {
+  const navigate = useNavigate()
   const [buildingName, setBuildingName] = useState('')
   const [vertices, setVertices] = useState([
     { lat: '', lng: '' },
@@ -94,11 +96,36 @@ function BuildingForm() {
     <div
       style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #c5050c 0%, #9a0000 100%)',
+        background: '#c5050c',
         padding: '40px 20px'
       }}
     >
       <Container style={{ maxWidth: '900px' }}>
+
+        <Link 
+          to="/"
+          style={{
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            zIndex: 2001,
+            textDecoration: 'none'
+          }}
+        >
+          <Button
+            variant="light"
+            size="sm"
+            style={{
+              background: 'rgba(255, 255, 255, 0.9)',
+              border: '1px solid rgba(0, 0, 0, 0.1)',
+              borderRadius: '8px',
+              fontWeight: 'bold'
+            }}
+          >
+            Home
+          </Button>
+        </Link>
+
         <div
           style={{
             background: 'rgba(255, 255, 255, 0.95)',
