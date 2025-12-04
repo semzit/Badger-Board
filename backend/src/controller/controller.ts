@@ -2,9 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import { buildingForCoords, findBoard, setBuilding } from "../services/boardManager";
 import { findBuilding, setId } from "../services/idManager";
 import { randomUUID } from "crypto";
-import { auth } from "../types/types";
+import { auth, board } from "../types/types";
 import { LatLon, toLatLon } from "geolocation-utils"
-import { loadBoard, readDb } from "../services/dbService";
+import { loadBoard, deleteBoardDb } from "../services/dbService";
 
 export const getBoard = (req : Request, res: Response, next : NextFunction) => {
     try{
@@ -12,7 +12,7 @@ export const getBoard = (req : Request, res: Response, next : NextFunction) => {
         const id : string = req.params.id;  
         const building = findBuilding(id) ; 
         if (building){
-            const board = findBoard(building);
+            const board : board = findBoard(building);
             res.json(board)
         }
     }catch (error){
@@ -67,18 +67,29 @@ export const setBoard = async (req: Request, res: Response, next : NextFunction)
             latLons.push(toLatLon([coords[i][0], coords[i][1]])); 
         }
 
-
         // load board manager
         await setBuilding(boardName, {
             drawing: drawing, 
-            coords : latLons
+            coords : latLons, 
+            updates : 0
         }); 
         
         // load db 
-        await loadBoard(boardName, drawing, coords);
-        await readDb(); 
+        await loadBoard(boardName, drawing, coords); 
     }catch(error){
         console.log('[Controller] Set board error'); 
         next(error); 
     }
 }; 
+
+export const deleteBoard =  async (req: Request, res: Response, next : NextFunction) => {
+    try {
+        console.log("deleteBoard request received"); 
+        const { boardName } = req.body; 
+        await deleteBoardDb(boardName); 
+    } catch (error) {
+        console.log('[Controller] Delete board error')
+        next(error); 
+    }
+}
+

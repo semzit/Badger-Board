@@ -114,21 +114,18 @@ function Screen({ selectedColor }) {
 
       const json2 = await res.json(); 
 
-      const initState = json2.board; 
+      const initState = json2.drawing; 
       
       console.log(`initState: ${initState}`);
-      // const temp = [];
+      
+     const temp = [];
 
-      // for (let i = 0; i < 100; i++) {
-      //   for (let j = 0; j < 100; j++) {
-      //     temp.push(initState[i][j]);
-      //   }
-      // }
-
-      const temp = json2.board.flat(); 
-
-      console.log('temp');
-
+     for (let i = 0; i < 100; i++) {
+       for (let j = 0; j < 100; j++) {
+         temp.push(initState[i][j]);
+       }
+     }
+      //const temp = json2.board.flat(); 
 
       setPixels(temp);
     }

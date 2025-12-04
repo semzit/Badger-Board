@@ -34,7 +34,8 @@ export type boardComplete = {
 
 export type board = {
     drawing : number[][], 
-    coords : LatLon[]
+    coords : LatLon[], 
+    updates : number  
 }; 
 
 export type setBoard = {

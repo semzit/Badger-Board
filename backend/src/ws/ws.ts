@@ -1,8 +1,9 @@
 import { WebSocketServer, WebSocket } from "ws";
 import { wsWrite, update } from "../types/types";
-import { updatePixel } from "../services/boardManager";
-import { findBuilding, readIDHOLDER, setId } from "../services/idManager";
-import { getBuilding, setClient } from "../services/clientManager";
+import { findBoard, updatePixel, incrementUpdates, resetUpdates } from "../services/boardManager";
+import { findBuilding } from "../services/idManager";
+import { setClient } from "../services/clientManager";
+import {  updateDb } from "../services/dbService";
 
 const wss = new WebSocketServer({ port : 8081});
 
@@ -18,7 +19,6 @@ export const start = () : void => {
 
                 const {userId, x, y, color} = msgObject; 
 
-                console.log(color); 
                 const update : update = {
                     x : x, 
                     y : y, 
@@ -26,9 +26,14 @@ export const start = () : void => {
                 }; 
  
                 const building = findBuilding(userId);
-
                 if  (building){
                     updatePixel(building, x, y, color); 
+                    const board = findBoard(building)
+                    incrementUpdates(building); 
+                    if (board.updates > 20){  // update the board data in the database after 20 updates to board
+                        updateDb(building, board); 
+                        resetUpdates(building); 
+                    }
                     setClient(userId , ws); 
                     wss.clients.forEach((client) => {
                         if (client.readyState === WebSocket.OPEN) {
@@ -37,7 +42,6 @@ export const start = () : void => {
                     });
                 }else{
                     console.log("[WS] Id rejected"); 
-                    console.log(readIDHOLDER()); 
                 }
                 
             });

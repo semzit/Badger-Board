@@ -11,11 +11,28 @@ try{
 
     const mess = {
         boardName : "morg", 
+        password : "1234",
         board : {
-            board  : boardInit, 
+            drawing  : boardInit, 
             coords :  coordInit
         }
-    }
+    }; 
+
+    const dell = {
+        password : "1234", 
+        boardName : "morg"
+    }; 
+
+    // await fetch(
+    //     `http://localhost:8080/api/init/deleteBoard`, 
+    //     {
+    //         method: "POST",
+    //         headers: {
+    //             'Content-Type': 'application/json' // Tell the server we are sending JSON
+    //         },
+    //         body: JSON.stringify(dell)
+    //     }
+    // )
 
     await fetch(
         `http://localhost:8080/api/init/setBoard`, 

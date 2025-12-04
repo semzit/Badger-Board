@@ -29,8 +29,23 @@ export const buildingForCoords = (coords: LatLon) : building | undefined => {
 
 export const updatePixel = (building : string, xCoord : number, yCoord : number, color : number) => {
     const drawing = findBoard(building).drawing; 
-    
-    console.log(color);
     drawing[xCoord][yCoord] = color; 
-    console.log(drawing[xCoord])
 }; 
+
+export const incrementUpdates = (building : string) => {
+    const {drawing, coords, updates} = findBoard(building); 
+    boardHolder.set(building, {
+        drawing : drawing,
+        coords : coords, 
+        updates : updates + 1
+    }); 
+}; 
+
+export const resetUpdates = (building : string) => {
+    const {drawing, coords } = findBoard(building); 
+    boardHolder.set(building, {
+        drawing : drawing,
+        coords : coords, 
+        updates : 0
+    }); 
+}

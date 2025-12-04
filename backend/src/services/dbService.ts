@@ -36,14 +36,14 @@ export const loadBoard = async(building : string, board : number[][], coords: nu
 }
 
 export const updateDb = async(building : string, board : board) => {
-  const {drawing, coords} = board; 
+  console.log(`Updating db data for ${building}`);
+  const {drawing} = board; 
 
   const boardString = JSON.stringify(drawing); 
-  const coordString = JSON.stringify(coords); 
 
-  const update =  `UPDATE boards SET board = ? coords = ? WHERE building = ?`;
+  const update = `UPDATE boards SET board = ? WHERE building = ?`;
 
-  await db.run(update, [boardString, coordString, building]); 
+  await db.run(update, [boardString, building]); 
 }; 
 
 /**
@@ -59,7 +59,6 @@ export const readDb = async () : Promise<boardComplete[]> => {
   const coordsSerialized = await db.all(getCoordSQL); 
   const boardSerialized =  await db.all(getBoardSQL); 
 
-  
   if (boardSerialized && coordsSerialized){
     const boards : boardComplete[]= []; 
 
@@ -97,3 +96,8 @@ export const readDb = async () : Promise<boardComplete[]> => {
   }
   
 }; 
+
+export const deleteBoardDb = async (building : string) : Promise<void> => {
+  const deleteBoardSQL = 'DELETE FROM boards WHERE building = ?'; 
+  await db.run(deleteBoardSQL, [building]); 
+}
