@@ -10,7 +10,7 @@ try{
     ]; 
 
     const mess = {
-        boardName : "tri sig", 
+        boardName : "morg", 
         board : {
             board  : boardInit, 
             coords :  coordInit

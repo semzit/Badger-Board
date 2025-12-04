@@ -12,8 +12,9 @@ async function main(){
     try{
         await buildDb();
         
-        await readDb(); 
+        const boards = await readDb(); 
 
+        //console.log(boards[0].coords); 
 
         //const concordInfo : board = await readDb("concord"); 
 

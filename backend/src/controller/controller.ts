@@ -76,6 +76,7 @@ export const setBoard = async (req: Request, res: Response, next : NextFunction)
         
         // load db 
         await loadBoard(boardName, drawing, coords);
+        await readDb(); 
     }catch(error){
         console.log('[Controller] Set board error'); 
         next(error); 

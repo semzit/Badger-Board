@@ -51,35 +51,44 @@ export const updateDb = async(building : string, board : board) => {
  */
 export const readDb = async () : Promise<boardComplete[]> => {
   const getBuildingSQL = 'SELECT building FROM boards'; 
-  const getBoardSQL = `SELECT board FROM boards`;
   const getCoordSQL = `SELECT coords FROM boards`;
+  const getBoardSQL = `SELECT board FROM boards`;
+  
 
-  const buildingSerialized = await db.get(getBuildingSQL);
-  const boardSerialized =  await db.get(getBoardSQL); 
-  const coordsSerialized = await db.get(getCoordSQL); 
+  const buildingSerialized = await db.all(getBuildingSQL);
+  const coordsSerialized = await db.all(getCoordSQL); 
+  const boardSerialized =  await db.all(getBoardSQL); 
+
   
   if (boardSerialized && coordsSerialized){
-    const boards = []; 
-    const buildingDeSerialized : string[] = JSON.parse(buildingSerialized.building); 
-    const boardDeserialized : number[][][] = JSON.parse(boardSerialized.boards);
-    const coordsDeserialized : number[][][] = JSON.parse(coordsSerialized.coords); 
+    const boards : boardComplete[]= []; 
 
+    console.log(JSON.stringify(buildingSerialized)); 
+    
+    const buildingDeSerialized : any[] = buildingSerialized; 
+    const coordsDeserialized : any[] = coordsSerialized;
+    const boardDeserialized : any[] = boardSerialized; 
+    
     for (let i = 0 ; i < buildingSerialized.length ; i ++){
-      
-      let latlons: LatLon[] = []; 
+      let currentBuilding = buildingDeSerialized[i].building;
+      let currentCoords : number[][] = JSON.parse(coordsDeserialized[i].coords); 
+      let currentBoard : number[][] = JSON.parse(boardDeserialized[i].board);
 
-      for (let j = 0 ; j < coordsDeserialized.length ; j++){
-        latlons.push(toLatLon([coordsDeserialized[i][j][0], coordsDeserialized[i][j][1]])); 
+      let latlons: LatLon[] = []; 
+      for (let j = 0 ; j < currentCoords.length ; j++){
+        latlons.push(toLatLon([currentCoords[j][0], currentCoords[j][1]])); 
       }
 
-      const board = {
-        name : buildingDeSerialized[i],
-        drawing : boardDeserialized[i], 
+      const board : boardComplete = {
+        name : currentBuilding,
+        drawing : currentBoard, 
         coords : latlons
       } ; 
 
       boards.push(board); 
     }
+
+    console.log(boards); 
     
     return boards; 
   }else{
