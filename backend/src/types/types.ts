@@ -26,8 +26,14 @@ export type update = {
     color : number
 }; 
 
+export type boardComplete = {
+    name : string, 
+    drawing : number[][], 
+    coords : LatLon[]
+}
+
 export type board = {
-    board : number[][], 
+    drawing : number[][], 
     coords : LatLon[]
 }; 
 

@@ -12,7 +12,7 @@ async function main(){
     try{
         await buildDb();
         
-        //await readDb(); 
+        await readDb(); 
 
 
         //const concordInfo : board = await readDb("concord"); 

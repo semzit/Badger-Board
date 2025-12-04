@@ -1,7 +1,6 @@
-import { board, initData } from "../types/types";
+import { board, boardComplete, initData } from "../types/types";
 import sqlite3  from "sqlite3";
 import { Database, open } from "sqlite";
-import { error } from "console";
 import { toLatLon, LatLon } from "geolocation-utils";
 
 let db : Database; 
@@ -36,38 +35,56 @@ export const loadBoard = async(building : string, board : number[][], coords: nu
   await db.run(update, [building, boardString, coordString]); 
 }
 
-export const updateDb = async(building : string, board : number[][]) => {
-  const boardString = JSON.stringify(board); 
+export const updateDb = async(building : string, board : board) => {
+  const {drawing, coords} = board; 
 
-  const update =  `UPDATE boards SET board = ? WHERE building = ?`;
+  const boardString = JSON.stringify(drawing); 
+  const coordString = JSON.stringify(coords); 
 
-  await db.run(update, [boardString, building]); 
+  const update =  `UPDATE boards SET board = ? coords = ? WHERE building = ?`;
+
+  await db.run(update, [boardString, coordString, building]); 
 }; 
 
-export const readDb = async(building: string) : Promise<board> => {
-  const getBoardSQL = `SELECT board FROM boards WHERE building = ?`;
-  const getCoordSQL = `SELECT coords FROM boards WHERE building = ?`;
+/**
+ * @returns array of boards to be entered into the board manager
+ */
+export const readDb = async () : Promise<boardComplete[]> => {
+  const getBuildingSQL = 'SELECT building FROM boards'; 
+  const getBoardSQL = `SELECT board FROM boards`;
+  const getCoordSQL = `SELECT coords FROM boards`;
 
-  const boardSerialized =  await db.get(getBoardSQL, [building]); // should probably made into one statment 
-  const coordsSerialized = await db.get(getCoordSQL, [building]); 
+  const buildingSerialized = await db.get(getBuildingSQL);
+  const boardSerialized =  await db.get(getBoardSQL); 
+  const coordsSerialized = await db.get(getCoordSQL); 
   
   if (boardSerialized && coordsSerialized){
-    const boardDeserialized : number[][] = JSON.parse(boardSerialized.board);
-    const coordsDeserialized : number[][] = JSON.parse(coordsSerialized.coords); 
+    const boards = []; 
+    const buildingDeSerialized : string[] = JSON.parse(buildingSerialized.building); 
+    const boardDeserialized : number[][][] = JSON.parse(boardSerialized.boards);
+    const coordsDeserialized : number[][][] = JSON.parse(coordsSerialized.coords); 
 
-    let latlons: LatLon[] = []; 
+    for (let i = 0 ; i < buildingSerialized.length ; i ++){
+      
+      let latlons: LatLon[] = []; 
 
-    for (let i = 0 ; i < coordsDeserialized.length ; i++){
-      latlons.push(toLatLon([coordsDeserialized[i][0], coordsDeserialized[i][1]])); 
+      for (let j = 0 ; j < coordsDeserialized.length ; j++){
+        latlons.push(toLatLon([coordsDeserialized[i][j][0], coordsDeserialized[i][j][1]])); 
+      }
+
+      const board = {
+        name : buildingDeSerialized[i],
+        drawing : boardDeserialized[i], 
+        coords : latlons
+      } ; 
+
+      boards.push(board); 
     }
-
-    return {
-      board : boardDeserialized, 
-      coords : latlons
-    };
-
+    
+    return boards; 
   }else{
     console.error("[DB] error reading database"); 
-    throw error("[DB error reading database]"); 
+    throw new Error("[DB error reading database]"); 
   }
+  
 }; 

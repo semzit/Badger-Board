@@ -4,14 +4,14 @@ import { findBuilding, setId } from "../services/idManager";
 import { randomUUID } from "crypto";
 import { auth } from "../types/types";
 import { LatLon, toLatLon } from "geolocation-utils"
-import { loadBoard } from "../services/dbService";
+import { loadBoard, readDb } from "../services/dbService";
 
 export const getBoard = (req : Request, res: Response, next : NextFunction) => {
     try{
         console.log("Get board request received"); 
         const id : string = req.params.id;  
         const building = findBuilding(id) ; 
-        if (building ){
+        if (building){
             const board = findBoard(building);
             res.json(board)
         }
@@ -53,14 +53,13 @@ export const health = (req: Request, res: Response, next : NextFunction) => {
     }
 }; 
 
-export const setBoard = (req: Request, res: Response, next : NextFunction) => {
+export const setBoard = async (req: Request, res: Response, next : NextFunction) => {
     try{
         console.log("setBoard request received");
         const { boardName, board } = req.body;
 
-        const {boardVals, coords} = board; 
+        const {drawing, coords} = board; 
 
-        console.log(coords)
         // load board into the database
         // convert coords to latLot and add to DB and board manager
         const latLons : LatLon[] = [];
@@ -68,17 +67,15 @@ export const setBoard = (req: Request, res: Response, next : NextFunction) => {
             latLons.push(toLatLon([coords[i][0], coords[i][1]])); 
         }
 
-        loadBoard(boardName, boardVals, coords); 
 
-        setBuilding(boardName,
-            {
-                board : boardVals,
-                coords : coords
-            }
-        ); 
+        // load board manager
+        await setBuilding(boardName, {
+            drawing: drawing, 
+            coords : latLons
+        }); 
         
-        console.log("Authenticate request received"); 
-    
+        // load db 
+        await loadBoard(boardName, drawing, coords);
     }catch(error){
         console.log('[Controller] Set board error'); 
         next(error); 

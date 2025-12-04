@@ -77,7 +77,7 @@ function Screen({ selectedColor }) {
       // get valid id 
       try {
         res = await fetch(
-          'http://localhost:8080/api/init',
+          'http://localhost:8080/api/init/auth',
           {
             method: "POST",
             headers: {
