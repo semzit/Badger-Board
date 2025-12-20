@@ -5,9 +5,7 @@ import { findBuilding } from "../services/idManager";
 import { setClient } from "../services/clientManager";
 import {  updateDb } from "../services/dbService";
 
-const WSPORT = Number(process.env.WSPORT) || 8081
-
-const wss = new WebSocketServer({ port : WSPORT});
+const wss = new WebSocketServer({ port : 8081});
 
 export const start = () : void => {
     try{

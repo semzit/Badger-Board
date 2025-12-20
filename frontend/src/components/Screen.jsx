@@ -3,9 +3,6 @@ import { useState, useEffect, useRef } from 'react'
 import './Screen.css'
 import WebSocket from "isomorphic-ws";
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8080"; 
-const WS_URL = process.env.BACKEND_URL || "http://localhost:8081"; 
-
 function Screen({ selectedColor }) {
   const [pixels, setPixels] = useState(Array(100 * 100).fill('rgb(255, 255, 255)'))
   const [clicked, setClicked] = useState(false);
@@ -80,7 +77,7 @@ function Screen({ selectedColor }) {
       // get valid id 
       try {
         res = await fetch(
-          `${BACKEND_URL}/api/init/auth`,
+          'http://localhost:8080/api/init/auth',
           {
             method: "POST",
             headers: {
@@ -108,7 +105,7 @@ function Screen({ selectedColor }) {
       // get curret board 
       try{
         res = await fetch(
-          `${BACKEND_URL}/api/init/${json.id}`
+          `http://localhost:8080/api/init/${json.id}`
         )
 
       } catch(e) {
@@ -141,7 +138,7 @@ function Screen({ selectedColor }) {
 
     // Connect to the server
 
-    ws.current = new WebSocket(WS_URL);
+    ws.current = new WebSocket('ws://localhost:8081/');
     // Connection Opened
     ws.current.onopen = () => {
       console.log("Connected to Server");

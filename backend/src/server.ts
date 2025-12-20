@@ -1,14 +1,11 @@
 import { app } from "./app"; 
-import { buildDb, readDb } from "./services/dbService";
+import { buildDb, readDb, updateDb } from "./services/dbService";
 import { setBuilding } from "./services/boardManager";
 import { start } from "./ws/ws";
 import 'dotenv/config'
 
-const RESTPORT = Number(process.env.RESTPORT) || 8080
-
-
-app.listen(RESTPORT, () => {
-  console.log(`Server running on port ${process.env.RESTPORT}`);
+app.listen(8080, () => {
+  console.log(`Server running on port ${process.env.PORT}`);
 })
 
 async function main(){
