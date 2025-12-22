@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { buildingForCoords, findBoard, setBuilding } from "../services/boardManager";
+import { boards, buildingForCoords, findBoard, setBuilding } from "../services/boardManager";
 import { findBuilding, setId } from "../services/idManager";
 import { randomUUID } from "crypto";
-import { auth, board } from "../types/types";
+import { Auth, Board, Building } from "../types/types";
 import { LatLon, toLatLon } from "geolocation-utils"
 import { loadBoard, deleteBoardDb } from "../services/dbService";
 
@@ -12,7 +12,7 @@ export const getBoard = (req : Request, res: Response, next : NextFunction) => {
         const id : string = req.params.id;  
         const building = findBuilding(id) ; 
         if (building){
-            const board : board = findBoard(building);
+            const board : Board = findBoard(building);
             res.json(board)
         }
     }catch (error){
@@ -30,14 +30,14 @@ export const authenticate = (req: Request, res: Response, next : NextFunction) =
         if (building){
             const uuid : string = randomUUID();  
             setId(uuid, building); 
-            const json : auth = {
+            const json : Auth = {
                 id : uuid
             }; 
             console.log(`sent: ${JSON.stringify(json)}`);
             res.status(201).json(json);
         }else{
             console.log("[Controller] building not found for coords"); 
-            res.status(404)  // no id created send to no accessable page
+            res.status(404).send()  // no id created send to outside page
         }
     }catch(error){
         next(error); 
@@ -69,6 +69,7 @@ export const setBoard = async (req: Request, res: Response, next : NextFunction)
 
         // load board manager
         await setBuilding(boardName, {
+            location : boardName,
             drawing: drawing, 
             coords : latLons, 
             updates : 0
@@ -91,5 +92,21 @@ export const deleteBoard =  async (req: Request, res: Response, next : NextFunct
         console.log('[Controller] Delete board error')
         next(error); 
     }
-}
+}; 
 
+export const getBoardNames = async (req: Request, res: Response, next : NextFunction) => {
+    try{
+        console.log("getBoards request received"); 
+        // get list of boards 
+        let boardList :Building[] = []; 
+
+        boards().forEach((element) =>{
+            boardList.push(element.location); 
+        })
+        // add to json 
+        res.json(boardList); 
+    }catch(error){
+        console.log('[Controller] get board name error')
+        next(error); 
+    }
+}; 

@@ -1,4 +1,4 @@
-import { board, boardComplete, initData } from "../types/types";
+import { Board, Building } from "../types/types";
 import sqlite3  from "sqlite3";
 import { Database, open } from "sqlite";
 import { toLatLon, LatLon } from "geolocation-utils";
@@ -35,7 +35,7 @@ export const loadBoard = async(building : string, board : number[][], coords: nu
   await db.run(update, [building, boardString, coordString]); 
 }
 
-export const updateDb = async(building : string, board : board) => {
+export const updateDb = async(building : Building, board : Board) => {
   console.log(`Updating db data for ${building}`);
   const {drawing} = board; 
 
@@ -49,7 +49,7 @@ export const updateDb = async(building : string, board : board) => {
 /**
  * @returns array of boards to be entered into the board manager
  */
-export const readDb = async () : Promise<boardComplete[]> => {
+export const readDb = async () : Promise<Board[]> => {
   const getBuildingSQL = 'SELECT building FROM boards'; 
   const getCoordSQL = `SELECT coords FROM boards`;
   const getBoardSQL = `SELECT board FROM boards`;
@@ -60,7 +60,7 @@ export const readDb = async () : Promise<boardComplete[]> => {
   const boardSerialized =  await db.all(getBoardSQL); 
 
   if (boardSerialized && coordsSerialized){
-    const boards : boardComplete[]= []; 
+    const boards : Board[]= []; 
 
     console.log(JSON.stringify(buildingSerialized)); 
     
@@ -78,10 +78,11 @@ export const readDb = async () : Promise<boardComplete[]> => {
         latlons.push(toLatLon([currentCoords[j][0], currentCoords[j][1]])); 
       }
 
-      const board : boardComplete = {
-        name : currentBuilding,
+      const board : Board = {
+        location : currentBuilding,
         drawing : currentBoard, 
-        coords : latlons
+        coords : latlons, 
+        updates : 0
       } ; 
 
       boards.push(board); 

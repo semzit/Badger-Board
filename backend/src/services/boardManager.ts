@@ -1,10 +1,14 @@
 import { LatLon } from "geolocation-utils";
-import { board, boardHolder, building, coords } from "../types/types";
+import { Board, boardHolder, Building, coords } from "../types/types";
 import { validCoords } from "./geoService";
 
 const boardHolder : boardHolder = new Map(); 
 
-export const findBoard = (building : building) : board => {
+export const boards = () : Board[] => {
+    return Array.from(boardHolder.values()); 
+}
+
+export const findBoard = (building : Building) : Board => {
     const board = boardHolder.get(building); 
     if (board === undefined){
         throw new Error("[Board] Board not found in boardHolder"); 
@@ -12,12 +16,12 @@ export const findBoard = (building : building) : board => {
     return board; 
 };
 
-export const setBuilding = (building: string , board: board) => {
+export const setBuilding = (building: string , board: Board) => {
     boardHolder.set(building, board); 
 };
 
 // If a valid building exists return it otherwise return no building 
-export const buildingForCoords = (coords: LatLon) : building | undefined => {
+export const buildingForCoords = (coords: LatLon) : Building | undefined => {
     for (const [key, value] of boardHolder.entries()){
         console.log(`coords should be latlon: ${JSON.stringify(coords)}`); 
         console.log(value.coords); 
@@ -35,6 +39,7 @@ export const updatePixel = (building : string, xCoord : number, yCoord : number,
 export const incrementUpdates = (building : string) => {
     const {drawing, coords, updates} = findBoard(building); 
     boardHolder.set(building, {
+        location : building, 
         drawing : drawing,
         coords : coords, 
         updates : updates + 1
@@ -44,6 +49,7 @@ export const incrementUpdates = (building : string) => {
 export const resetUpdates = (building : string) => {
     const {drawing, coords } = findBoard(building); 
     boardHolder.set(building, {
+        location : building, 
         drawing : drawing,
         coords : coords, 
         updates : 0

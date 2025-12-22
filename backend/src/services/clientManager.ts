@@ -1,11 +1,11 @@
-import { building, clientHolder, id } from "../types/types";
+import { Building, ClientHolder, Id } from "../types/types";
 
-const clientManager : clientHolder = new Map(); 
+const clientManager : ClientHolder = new Map(); 
 
-export const setClient = (id : id, client : any) => {
+export const setClient = (id : Id, client : any) => {
     clientManager.set(id, client); 
 }
 
-export const getBuilding = (client : any): building | undefined => {
+export const getBuilding = (client : any): Building | undefined => {
     return clientManager.get(client);  
 }

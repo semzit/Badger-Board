@@ -1,8 +1,7 @@
 import { app } from "./app"; 
-import { buildDb, readDb, updateDb } from "./services/dbService";
+import { buildDb, readDb } from "./services/dbService";
 import { setBuilding } from "./services/boardManager";
 import { start } from "./ws/ws";
-import 'dotenv/config'
 
 app.listen(8080, () => {
   console.log(`Server running on port ${process.env.PORT}`);
@@ -16,12 +15,8 @@ async function main(){
         
         // from the db enter all data into board manager
         for (let i = 0; i < boards.length ; i ++){
-            const {name, drawing, coords} = boards[i];  
-            setBuilding(name , {
-                drawing : drawing,
-                coords : coords, 
-                updates : 0 
-            }); 
+            const {location} = boards[i];  
+            setBuilding(location , boards[i]); 
         };
 
        start();

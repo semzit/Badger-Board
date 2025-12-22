@@ -1,5 +1,5 @@
 import { WebSocketServer, WebSocket } from "ws";
-import { wsWrite, update } from "../types/types";
+import { WsWrite, Update } from "../types/types";
 import { findBoard, updatePixel, incrementUpdates, resetUpdates } from "../services/boardManager";
 import { findBuilding } from "../services/idManager";
 import { setClient } from "../services/clientManager";
@@ -15,11 +15,11 @@ export const start = () : void => {
             ws.on('message', (msg) => {
                 console.log('[WS] Websocket message received'); 
                 const msgAsString = msg.toString('utf-8');
-                const msgObject = JSON.parse(msgAsString) as wsWrite; 
+                const msgObject = JSON.parse(msgAsString) as WsWrite; 
 
                 const {userId, x, y, color} = msgObject; 
 
-                const update : update = {
+                const update : Update = {
                     x : x, 
                     y : y, 
                     color : color

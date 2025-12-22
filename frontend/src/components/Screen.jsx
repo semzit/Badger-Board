@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router';
 //import {PwebsocketConnectionString} from '../../.env'
 import './Screen.css'
 import WebSocket from "isomorphic-ws";
@@ -12,6 +13,7 @@ function Screen({ selectedColor }) {
 
   const [userId, setUserId] = useState(0);
   const userIdRef = useRef(null); 
+  const nav = useNavigate(); 
 
 //  let userId; 
   // 1. State for the grid data (mapping "x,y" keys to color strings)
@@ -89,18 +91,18 @@ function Screen({ selectedColor }) {
       } catch(e) {
         console.log(e);
       }
-      
+
+      console.log(res.status); 
+
+      if (res.status == 404){
+        console.log("oustide of possible boundary"); 
+        nav("/outside");
+      }
+
       let json = await res.json(); 
 
-      console.log(json.id);
       setUserId(json.id);
       userIdRef.current = json.id;
-
-
-      // let json = await res.json();
-      // console.log(JSON.stringify(json)); 
-      // const userId =  json.id; 
-      // console.log(userId.id); 
 
       // get curret board 
       try{
