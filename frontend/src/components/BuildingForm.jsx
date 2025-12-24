@@ -5,6 +5,7 @@ import { useNavigate, Link } from 'react-router'
 function BuildingForm() {
   const navigate = useNavigate()
   const [buildingName, setBuildingName] = useState('')
+  const [password, setPassword] = useState('')
   const [vertices, setVertices] = useState([
     { lat: '', lng: '' },
     { lat: '', lng: '' },
@@ -13,6 +14,7 @@ function BuildingForm() {
   ])
   const [status, setStatus] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const REST_URL = import.meta.env.REACT_APP_REST_URL || `http://localhost:8080`; 
 
   const handleVertexChange = (index, field, value) => {
     const newVertices = [...vertices]
@@ -20,9 +22,16 @@ function BuildingForm() {
     setVertices(newVertices)
   }
 
+  
+
   const validateForm = () => {
     if (!buildingName.trim()) {
       setStatus({ type: 'danger', message: 'Building name is required' })
+      return false
+    }
+
+    if (!password.trim()) {
+      setStatus({ type: 'danger', message: 'Password is required' })
       return false
     }
 
@@ -59,15 +68,24 @@ function BuildingForm() {
     setStatus(null)
 
     try {
-      const response = await fetch('http://localhost:3000/admin/building', {
+      const boardInit = Array(100).fill(0).map(() => Array(100).fill(0));
+      const response = await fetch(`${REST_URL}/api/setBoard`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json' 
+        },
         body: JSON.stringify({
-          name: buildingName,
-          vertices: vertices.map(v => ({
-            latitude: parseFloat(v.lat),
-            longitude: parseFloat(v.lng)
-          }))
+          boardName : buildingName,
+          password : password, 
+          board: {
+            drawing : boardInit, 
+            coords : [
+              [parseFloat(vertices.at(0).lat), parseFloat(vertices.at(0).lng)], 
+              [parseFloat(vertices.at(1).lat), parseFloat(vertices.at(1).lng)],
+              [parseFloat(vertices.at(2).lat), parseFloat(vertices.at(2).lng)],
+              [parseFloat(vertices.at(3).lat), parseFloat(vertices.at(3).lng)],
+            ]
+          }
         })
       })
 
@@ -75,6 +93,7 @@ function BuildingForm() {
         setStatus({ type: 'success', message: 'Building added successfully!' })
         // Reset form
         setBuildingName('')
+        setPassword('')
         setVertices([
           { lat: '', lng: '' },
           { lat: '', lng: '' },
@@ -211,6 +230,23 @@ function BuildingForm() {
                 </Card.Body>
               </Card>
             ))}
+
+            {/* Passoword */}
+            <Form.Group className="mb-4">
+              <Form.Label style={{ fontWeight: 'bold', color: '#333' }}>
+                Password
+              </Form.Label>
+              <Form.Control
+                type="number"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                style={{
+                  padding: '12px',
+                  borderRadius: '10px',
+                  border: '2px solid #dee2e6'
+                }}
+              />
+            </Form.Group>
 
             {/* Submit Button */}
             <div className="d-grid gap-2 mt-4">

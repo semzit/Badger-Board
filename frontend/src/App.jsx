@@ -38,31 +38,6 @@ function BadgerBoard() {
       backgroundRepeat: "no-repeat",
       }}>
 
-      {/* Admin Link */}
-      <Link 
-        to="/admin"
-        style={{
-          position: 'fixed',
-          top: '20px',
-          right: '20px',
-          zIndex: 2001,
-          textDecoration: 'none'
-        }}
-      >
-        <Button
-          variant="light"
-          size="sm"
-          style={{
-            background: 'rgba(255, 255, 255, 0.9)',
-            border: '1px solid rgba(0, 0, 0, 0.1)',
-            borderRadius: '8px',
-            fontWeight: 'bold'
-          }}
-        >
-          Admin
-        </Button>
-      </Link>
-
       {/* Landing Page Overlay */}
       {showLanding && (
         <LandingPage onEnter={handleEnterCanvas} isExiting={isExiting} />

@@ -24,7 +24,7 @@ export const authenticate = (req: Request, res: Response, next : NextFunction) =
     try{
         let { coords } = req.body;
         console.log(req.body); 
-        coords = toLatLon([coords.latitude, coords.longitude])
+        coords = toLatLon([coords.longitude, coords.latitude])
         const building =  buildingForCoords(coords);
         console.log("Authenticate request received"); 
         if (building){
@@ -56,29 +56,38 @@ export const health = (req: Request, res: Response, next : NextFunction) => {
 export const setBoard = async (req: Request, res: Response, next : NextFunction) => {
     try{
         console.log("setBoard request received");
-        const { boardName, board } = req.body;
+        const { boardName, board, password } = req.body;
 
+        const serverPass = process.env.ADMIN_PASSWORD || 1234; 
+        if (password != serverPass) {
+            throw new Error("invalid password"); 
+        }
+        
         const {drawing, coords} = board; 
 
         // load board into the database
         // convert coords to latLot and add to DB and board manager
         const latLons : LatLon[] = [];
         for (let i = 0 ; i < coords.length ; i ++){
-            latLons.push(toLatLon([coords[i][0], coords[i][1]])); 
+            latLons.push(toLatLon([coords[i][1], coords[i][0]])); 
         }
+
+        const boardInit = Array(100).fill(0).map(() => Array(100).fill(0));
 
         // load board manager
         await setBuilding(boardName, {
             location : boardName,
-            drawing: drawing, 
+            drawing: boardInit, 
             coords : latLons, 
             updates : 0
         }); 
         
         // load db 
         await loadBoard(boardName, drawing, coords); 
+        res.status(201).send(); 
     }catch(error){
         console.log('[Controller] Set board error'); 
+        res.status(404).send(); 
         next(error); 
     }
 }; 
@@ -97,13 +106,13 @@ export const deleteBoard =  async (req: Request, res: Response, next : NextFunct
 export const getBoardNames = async (req: Request, res: Response, next : NextFunction) => {
     try{
         console.log("getBoards request received"); 
-        // get list of boards 
-        let boardList :Building[] = []; 
+        let boardList : any = []; 
 
         boards().forEach((element) =>{
             boardList.push(element.location); 
         })
         // add to json 
+        console.log(boardList); 
         res.json(boardList); 
     }catch(error){
         console.log('[Controller] get board name error')

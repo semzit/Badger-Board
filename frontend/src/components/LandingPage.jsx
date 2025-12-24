@@ -58,27 +58,7 @@ function LandingPage({ onEnter, isExiting }) {
         >
           Badger Board
         </h1>
-        <h2
-          style={{
-            fontSize: '1.8rem',
-            marginBottom: '2rem',
-            color: '#555',
-            fontWeight: '300'
-          }}
-        >
-          You are connected to
-        </h2>
-        <h3
-          style={{
-            fontSize: '2.0rem',
-            fontWeight: 'bold',
-            marginBottom: '2rem',
-            background: 'linear-gradient(135deg, #c5050c 0%, #ff5555 100%)',
-            backgroundClip: 'text',
-          }}
-        >
-            Morgridge Hall
-        </h3>
+      
         <p
           style={{
             fontSize: '1.1rem',

@@ -8,14 +8,18 @@ function Screen({ selectedColor }) {
   const [pixels, setPixels] = useState(Array(100 * 100).fill('rgb(255, 255, 255)'))
   const [clicked, setClicked] = useState(false);
   const [mouseMoved, setMouseMoved] = useState(false);
+  const [location, setLocation]= useState(null); 
   const [ripple, setRipple] = useState(null); // { index, id }
+
   const pixelSize = 10;
 
   const [userId, setUserId] = useState(0);
   const userIdRef = useRef(null); 
   const nav = useNavigate(); 
+  const WS_URL = import.meta.env.REACT_APP_WS_URL || `ws://localhost:8081`;
+  const REST_URL = import.meta.env.REACT_APP_REST_URL || `http://localhost:8080`; 
 
-//  let userId; 
+  //  let userId; 
   // 1. State for the grid data (mapping "x,y" keys to color strings)
   // State for connection status
   const [isConnected, setIsConnected] = useState(false);
@@ -79,7 +83,7 @@ function Screen({ selectedColor }) {
       // get valid id 
       try {
         res = await fetch(
-          'http://localhost:8080/api/init/auth',
+          `${REST_URL}/api/init/auth`,
           {
             method: "POST",
             headers: {
@@ -107,7 +111,7 @@ function Screen({ selectedColor }) {
       // get curret board 
       try{
         res = await fetch(
-          `http://localhost:8080/api/init/${json.id}`
+          `${REST_URL}/api/init/${json.id}`
         )
 
       } catch(e) {
@@ -117,6 +121,7 @@ function Screen({ selectedColor }) {
       const json2 = await res.json(); 
 
       const initState = json2.drawing; 
+      setLocation(json2.location); 
       
       console.log(`initState: ${initState}`);
       
@@ -140,7 +145,7 @@ function Screen({ selectedColor }) {
 
     // Connect to the server
 
-    ws.current = new WebSocket('ws://localhost:8081/');
+    ws.current = new WebSocket(WS_URL);
     // Connection Opened
     ws.current.onopen = () => {
       console.log("Connected to Server");
@@ -200,36 +205,70 @@ function Screen({ selectedColor }) {
   };
 
   return (
-    <div 
-      style={{
-        display: 'grid',
-        gridTemplateColumns: `repeat(100, ${pixelSize}px)`,
-        gridTemplateRows: `repeat(100, ${pixelSize}px)`,
-        border: '3px solid rgb(210, 210, 200)',
-        width: (100 * pixelSize + 5),
-        background: 'white',
-        margin: '20px auto'
-      }}
-    >
-      {pixels.map((p, i) => (
-        <div
-          key={i}
-          className="pixel"
-          style={{ background: p }}
-          onMouseUp={(e) => handleMouseUp(e, i)}
-          onMouseDown={handleMouseDown}
-          onMouseLeave={handleMouseLeave}
-        >
-          {ripple && ripple.index === i && (
-            <div
-              // id in key helps restart the CSS animation on each click
-              key={ripple.id}
-              className="ripple"
-              onAnimationEnd={() => setRipple(null)}
-            />
-          )}
-        </div>
-      ))}
+    <div className="screen-container" style={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      alignItems: 'center', 
+      width: '100%',
+      minHeight: '100vh',
+      paddingTop: '40px'
+    }}>
+      
+      {/* The Board Name Section */}
+      <div style={{
+        marginBottom: '20px',
+        textAlign: 'center'
+      }}>
+        <h1 style={{ 
+          margin: 0, 
+          fontSize: '2rem', 
+          color: '#333',
+          fontFamily: 'monospace' // Fits the pixel art vibe
+        }}>
+          Connected to <span style={{ color: '#007bff' }}>{location}</span>
+        </h1>
+        <p style={{ color: isConnected ? 'green' : 'red', margin: '5px 0' }}>
+          {isConnected ? '● Connected' : '○ Disconnected'}
+        </p>
+      </div>
+
+      {/* Your Existing Grid */}
+      <div 
+        style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(100, ${pixelSize}px)`,
+          gridTemplateRows: `repeat(100, ${pixelSize}px)`,
+          border: '5px solid rgb(210, 210, 200)',
+          width: (100 * pixelSize),
+          height: (100 * pixelSize),
+          background: 'white',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
+        }}
+      >
+        {pixels.map((p, i) => (
+          <div
+            key={i}
+            className="pixel"
+            style={{ 
+              background: p, 
+              width: pixelSize, 
+              height: pixelSize,
+              position: 'relative' // Critical for ripple positioning
+            }}
+            onMouseUp={(e) => handleMouseUp(e, i)}
+            onMouseDown={handleMouseDown}
+            onMouseLeave={handleMouseLeave}
+          >
+            {ripple && ripple.index === i && (
+              <div
+                key={ripple.id}
+                className="ripple"
+                onAnimationEnd={() => setRipple(null)}
+              />
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
