@@ -77,8 +77,10 @@ function Screen({ selectedColor }) {
       
       crd = await getLocation(); 
 
-      console.log( `data: ${JSON.stringify(crd)}`);
+      console.log(`data: ${JSON.stringify(crd)}`);
 
+
+      await fetch(`${REST_URL}/api`); 
 
       // get valid id 
       try {
@@ -144,7 +146,6 @@ function Screen({ selectedColor }) {
     // Check if we got a response with userId. If we did, initiate the connection, else return error screen.
 
     // Connect to the server
-
     ws.current = new WebSocket(WS_URL);
     // Connection Opened
     ws.current.onopen = () => {
