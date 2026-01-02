@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { boards, buildingForCoords, findBoard, setBuilding } from "../services/boardManager";
+import { boards, buildingForCoords, findBoard, setBuilding, removeBoard } from "../services/boardManager";
 import { findBuilding, setId } from "../services/idManager";
 import { randomUUID } from "crypto";
-import { Auth, Board, Building } from "../types/types";
+import { Auth, Board } from "../types/types";
 import { LatLon, toLatLon } from "geolocation-utils"
 import { loadBoard, deleteBoardDb } from "../services/dbService";
 
@@ -95,8 +95,16 @@ export const setBoard = async (req: Request, res: Response, next : NextFunction)
 export const deleteBoard =  async (req: Request, res: Response, next : NextFunction) => {
     try {
         console.log("deleteBoard request received"); 
-        const { boardName } = req.body; 
+        const { boardName, password } = req.body; 
+
+        const serverPass = process.env.ADMIN_PASSWORD || 1234; 
+        if (password != serverPass) {
+            throw new Error("invalid password"); 
+        }
+
+        await removeBoard(boardName); 
         await deleteBoardDb(boardName); 
+        res.status(201).send(); 
     } catch (error) {
         console.log('[Controller] Delete board error')
         next(error); 

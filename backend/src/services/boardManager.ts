@@ -16,6 +16,10 @@ export const findBoard = (building : Building) : Board => {
     return board; 
 };
 
+export const removeBoard = (building : Building) : void => {
+    boardHolder.delete(building)
+}
+
 export const setBuilding = (building: string , board: Board) => {
     boardHolder.set(building, board); 
 };

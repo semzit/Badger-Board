@@ -22,8 +22,6 @@ function BuildingForm() {
     setVertices(newVertices)
   }
 
-  
-
   const validateForm = () => {
     if (!buildingName.trim()) {
       setStatus({ type: 'danger', message: 'Building name is required' })
@@ -57,6 +55,41 @@ function BuildingForm() {
     }
 
     return true
+  }
+
+  const handleDelete = async (e) => {
+    e.preventDefault()
+
+    setIsSubmitting(true)
+    setStatus(null)
+
+    try {
+      const boardInit = Array(100).fill(0).map(() => Array(100).fill(0));
+      const response = await fetch(`${REST_URL}/api/deleteBoard`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify({
+          boardName : buildingName,
+          password : password
+        })
+      })
+
+      if (response.ok) {
+        setStatus({ type: 'success', message: 'Building removed successfully!' })
+        // Reset form
+        setBuildingName('')
+        setPassword('')
+      } else {
+        const error = await response.json()
+        setStatus({ type: 'danger', message: error.message || 'Failed to add building' })
+      }
+    } catch (error) {
+      setStatus({ type: 'danger', message: 'Network error: ' + error.message })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -157,11 +190,11 @@ function BuildingForm() {
           }}
         >
           <h2 className="text-center mb-4" style={{ color: '#c5050c', fontWeight: 'bold' }}>
-            Add New Building
+            Add/Remove A New Building
           </h2>
           
           <p className="text-center text-muted mb-4">
-            Enter the GPS coordinates for the 4 corners of the building boundary
+            Building corners not needed for remove operation
           </p>
 
           {status && (
@@ -231,7 +264,7 @@ function BuildingForm() {
               </Card>
             ))}
 
-            {/* Passoword */}
+            {/* Password */}
             <Form.Group className="mb-4">
               <Form.Label style={{ fontWeight: 'bold', color: '#333' }}>
                 Password
@@ -267,6 +300,30 @@ function BuildingForm() {
               </Button>
             </div>
           </Form>
+          
+          <Form onSubmit={handleDelete}>
+
+            {/* Submit Button */}
+            <div className="d-grid gap-2 mt-4">
+              <Button
+                type="submit"
+                size="lg"
+                disabled={isSubmitting}
+                style={{
+                  background: 'linear-gradient(135deg, #c5050c 0%, #ff0000 100%)',
+                  border: 'none',
+                  borderRadius: '12px',
+                  padding: '15px',
+                  fontWeight: 'bold',
+                  fontSize: '1.1rem'
+                }}
+              >
+                {isSubmitting ? 'Removing Building...' : 'Remove Building'}
+              </Button>
+            </div>
+            
+          </Form>
+          
         </div>
       </Container>
     </div>
