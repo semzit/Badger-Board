@@ -16,8 +16,6 @@ function Screen({ selectedColor }) {
   const [userId, setUserId] = useState(0);
   const userIdRef = useRef(null); 
   const nav = useNavigate(); 
-  const WS_URL = import.meta.env.REACT_APP_WS_URL || `ws://localhost:8081`;
-  const REST_URL = import.meta.env.REACT_APP_REST_URL || `http://localhost:8080`; 
 
   //  let userId; 
   // 1. State for the grid data (mapping "x,y" keys to color strings)
@@ -79,13 +77,10 @@ function Screen({ selectedColor }) {
 
       console.log(`data: ${JSON.stringify(crd)}`);
 
-
-      await fetch(`${REST_URL}/api`); 
-
       // get valid id 
       try {
         res = await fetch(
-          `${REST_URL}/api/init/auth`,
+          `/api/init/auth`,
           {
             method: "POST",
             headers: {
@@ -113,7 +108,7 @@ function Screen({ selectedColor }) {
       // get curret board 
       try{
         res = await fetch(
-          `${REST_URL}/api/init/${json.id}`
+          `/api/init/${json.id}`
         )
 
       } catch(e) {
@@ -146,7 +141,7 @@ function Screen({ selectedColor }) {
     // Check if we got a response with userId. If we did, initiate the connection, else return error screen.
 
     // Connect to the server
-    ws.current = new WebSocket(WS_URL);
+    ws.current = new WebSocket();
     // Connection Opened
     ws.current.onopen = () => {
       console.log("Connected to Server");

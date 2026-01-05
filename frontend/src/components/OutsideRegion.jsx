@@ -7,8 +7,6 @@ export default function BuildingForm() {
     const [isLoadingBoards, setIsLoadingBoards] = useState(true);
     const [error, setError] = useState(null); // Added this missing state
     
-    const REST_URL = import.meta.env.REACT_APP_REST_URL || `http://localhost:8080`; 
-
     useEffect(() => {
         // Prevent scroll for the "Outside Region" look
         const previous = document.body.style.overflow;
@@ -17,7 +15,7 @@ export default function BuildingForm() {
         const fetchBoards = async () => {
             try {
                 setIsLoadingBoards(true);
-                const response = await fetch(`${REST_URL}/api/boards`);
+                const response = await fetch(`/api/boards`);
                 
                 if (!response.ok) throw new Error('Failed to fetch boards');
                 
@@ -37,7 +35,7 @@ export default function BuildingForm() {
         return () => {
             document.body.style.overflow = previous || "auto";
         };
-    }, [REST_URL]);
+    },[]);
     
 
     return (

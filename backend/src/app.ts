@@ -5,7 +5,10 @@ import cors from 'cors';
 
 export const app = express(); 
 
-app.use(cors()); 
+app.use(cors({
+    origin : process.env.FRONTEND_URL || "http://localhost",
+    credentials : true
+})); 
 
 app.use(express.json()); 
 

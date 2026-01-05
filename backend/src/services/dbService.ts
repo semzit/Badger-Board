@@ -6,11 +6,16 @@ import { toLatLon, LatLon } from "geolocation-utils";
 let db : Database; 
 
 export const buildDb =  async() => {
+  const dbPath = process.env.DB_PATH || './bruh.db'; 
+
   db = await open({
-    filename : `./bruh.db`,
+    filename : dbPath,
     driver : sqlite3.Database,
   }); 
 
+  await db.exec("PRAGMA journal_mode = WAL;");
+  await db.exec("PRAGMA synchronous = NORMAL;");
+  
   const creatDBschema : string = `
   CREATE TABLE IF NOT EXISTS boards (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

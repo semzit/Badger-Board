@@ -14,7 +14,6 @@ function BuildingForm() {
   ])
   const [status, setStatus] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const REST_URL = import.meta.env.REACT_APP_REST_URL || `http://localhost:8080`; 
 
   const handleVertexChange = (index, field, value) => {
     const newVertices = [...vertices]
@@ -65,7 +64,7 @@ function BuildingForm() {
 
     try {
       const boardInit = Array(100).fill(0).map(() => Array(100).fill(0));
-      const response = await fetch(`${REST_URL}/api/deleteBoard`, {
+      const response = await fetch(`/api/deleteBoard`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json' 
@@ -102,7 +101,7 @@ function BuildingForm() {
 
     try {
       const boardInit = Array(100).fill(0).map(() => Array(100).fill(0));
-      const response = await fetch(`${REST_URL}/api/setBoard`, {
+      const response = await fetch(`/api/setBoard`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json' 
