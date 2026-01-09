@@ -19,38 +19,19 @@ export class InfraStack extends cdk.Stack {
         {name: 'Public', subnetType: ec2.SubnetType.PUBLIC}
       ]
     }); 
-    
+
+    const fileSystem = new efs.FileSystem(this, "BadgerBoardFS", {
+      vpc: vpc, 
+      encrypted: true,
+      lifecyclePolicy: efs.LifecyclePolicy.AFTER_14_DAYS,
+      performanceMode: efs.PerformanceMode.GENERAL_PURPOSE,
+      throughputMode: efs.ThroughputMode.BURSTING, 
+      removalPolicy: cdk.RemovalPolicy.DESTROY
+    }); 
+
     // ECS cluster
     const cluster = new ecs.Cluster(this, "BadgerBoardCluster",{
       vpc: vpc
     });
-
-
-    const backendTaskDef = new ecs.FargateTaskDefinition(this, "BackendTaskDefinition", {
-      memoryLimitMiB: 512, 
-      cpu: 256, 
-    })
-
-    backendTaskDef.addContainer("BackendContainerDef", {
-      image: ecs.ContainerImage.fromAsset("../backend"), 
-      portMappings: [
-        {
-          containerPort: 8080
-        }
-      ]
-    })
-
-    const loadBalancedFargateService = new ecsp.ApplicationLoadBalancedFargateService(this, 'BadgerBoard', {
-      cluster,
-      taskDefinition: backendTaskDef, 
-      minHealthyPercent: 100,
-      assignPublicIp: true
-    });
-
-    loadBalancedFargateService.targetGroup.configureHealthCheck({
-      path: "/api/", 
-      port: "8080"
-    });
-
   }
 }
