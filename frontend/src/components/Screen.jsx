@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router';
-//import {PwebsocketConnectionString} from '../../.env'
 import './Screen.css'
 import WebSocket from "isomorphic-ws";
+
+const WS_URL = import.meta.env.VITE_REACT_APP_WS_URL || `ws://localhost:8081`;
 
 function Screen({ selectedColor }) {
   const [pixels, setPixels] = useState(Array(100 * 100).fill('rgb(255, 255, 255)'))
@@ -16,8 +17,8 @@ function Screen({ selectedColor }) {
   const [userId, setUserId] = useState(0);
   const userIdRef = useRef(null); 
   const nav = useNavigate(); 
-
-  //  let userId; 
+  
+  //  let userId;
   // 1. State for the grid data (mapping "x,y" keys to color strings)
   // State for connection status
   const [isConnected, setIsConnected] = useState(false);
@@ -124,11 +125,13 @@ function Screen({ selectedColor }) {
       
      const temp = [];
 
-     for (let i = 0; i < 100; i++) {
-       for (let j = 0; j < 100; j++) {
-         temp.push(initState[i][j]);
-       }
-     }
+      if (initState && initState.length > 0){
+        for (let i = 0; i < 100; i++) {
+          for (let j = 0; j < 100; j++) {
+            temp.push(initState[i][j]);
+          }
+        }
+      }
       //const temp = json2.board.flat(); 
 
       setPixels(temp);
@@ -141,7 +144,7 @@ function Screen({ selectedColor }) {
     // Check if we got a response with userId. If we did, initiate the connection, else return error screen.
 
     // Connect to the server
-    ws.current = new WebSocket();
+    ws.current = new WebSocket(WS_URL);
     // Connection Opened
     ws.current.onopen = () => {
       console.log("Connected to Server");
