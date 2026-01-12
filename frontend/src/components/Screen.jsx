@@ -81,7 +81,7 @@ function Screen({ selectedColor }) {
       // get valid id 
       try {
         res = await fetch(
-          `/api/init/auth`,
+          `/api/init/auth/`,
           {
             method: "POST",
             headers: {
@@ -96,7 +96,7 @@ function Screen({ selectedColor }) {
 
       console.log(res.status); 
 
-      if (res.status == 404){
+      if (res.status != 201){
         console.log("oustide of possible boundary"); 
         nav("/outside");
       }
@@ -105,11 +105,12 @@ function Screen({ selectedColor }) {
 
       setUserId(json.id);
       userIdRef.current = json.id;
+      console.log(json.id); 
 
       // get curret board 
       try{
         res = await fetch(
-          `/api/init/${json.id}`
+          `/api/init/${json.id}/`
         )
 
       } catch(e) {
@@ -144,7 +145,7 @@ function Screen({ selectedColor }) {
     // Check if we got a response with userId. If we did, initiate the connection, else return error screen.
 
     // Connect to the server
-    ws.current = new WebSocket(WS_URL);
+    ws.current = new WebSocket(`wss://${window.location.host}/ws`);
     // Connection Opened
     ws.current.onopen = () => {
       console.log("Connected to Server");

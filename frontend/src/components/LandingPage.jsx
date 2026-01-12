@@ -117,7 +117,7 @@ function LandingPage({ onEnter, isExiting }) {
               </span>
             </>
           ) : (
-            'Enter Canvas'
+            'Enter Board'
           )}
         </Button>
 

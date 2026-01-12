@@ -1,5 +1,5 @@
 import { app } from "./app"; 
-import { buildDb, readDb } from "./services/dbService";
+import { buildDb, loadBoard, readDb } from "./services/dbService";
 import { setBuilding } from "./services/boardManager";
 import { start } from "./ws/ws";
 
@@ -22,6 +22,10 @@ async function main(){
         };
 
        start();
+
+       const boardInit = Array(100).fill(0).map(() => Array(100).fill(0));
+
+       loadBoard("test", boardInit, boardInit); 
     }catch (err){
         console.error(err); 
     }
