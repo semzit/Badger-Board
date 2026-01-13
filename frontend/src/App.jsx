@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { Button } from 'react-bootstrap';
-import { authenticate } from './services/restService';
 import './App.css';
 import Screen from './components/Screen';
 import ColorSelector from './components/ColorSelector';

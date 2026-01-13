@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Form, InputGroup } from 'react-bootstrap'
-import { HexColorPicker } from 'react-colorful'
+import {HexColorPicker} from 'react-colorful'
 
 function ColorSelector({ selectedColor, onColorSelect }) {
   const [inputValue, setInputValue] = useState(selectedColor)

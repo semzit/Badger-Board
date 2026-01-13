@@ -99,6 +99,8 @@ export class InfraStack extends Construct {
       assignPublicIp: true, 
       publicLoadBalancer: true, 
     });
+
+    
     
     service.targetGroup.configureHealthCheck({
       path: "/api/", 

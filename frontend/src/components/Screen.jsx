@@ -101,6 +101,9 @@ function Screen({ selectedColor }) {
         nav("/outside");
       }
 
+      console.log("Connected to Server");
+      setIsConnected(true);
+
       let json = await res.json(); 
 
       setUserId(json.id);
@@ -147,10 +150,7 @@ function Screen({ selectedColor }) {
     // Connect to the server
     ws.current = new WebSocket(`wss://${window.location.host}/ws`);
     // Connection Opened
-    ws.current.onopen = () => {
-      console.log("Connected to Server");
-      setIsConnected(true);
-    };
+    
 
     // Connection Closed
     ws.current.onclose = () => {

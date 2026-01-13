@@ -14,6 +14,7 @@
     "isomorphic-ws": "^5.0.0",
     "react": "^19.2.0",
     "react-bootstrap": "^2.10.10",
+    "react-color": "^2.19.3",
     "react-colorful": "^5.6.1",
     "react-dom": "^19.2.0",
     "react-router": "^7.9.6",
