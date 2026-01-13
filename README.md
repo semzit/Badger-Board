@@ -2,7 +2,7 @@
 
 ## Overview
 
-Badger Board is a geographically enabled, real-time collaborative whiteboarding application. Built with TypeScript and Node.js, it leverages WebSockets for millisecond pixel updates and a containerized AWS architecture to provide a seamless, persistent drawing experience for multiple users.Badger Board is a geographically enabled, real-time collaborative whiteboarding application. Built with TypeScript and Node.js, it leverages WebSockets for millisecond pixel updates and a containerized AWS architecture to provide a seamless, persistent drawing experience for multiple users.
+Badger Board is a geographically enabled, real-time collaborative whiteboarding application. Built with TypeScript and Node.js, it leverages WebSockets for millisecond pixel updates and a containerized AWS architecture to provide a seamless, persistent drawing experience for multiple users.
 
 
 ## Teck Stack 
