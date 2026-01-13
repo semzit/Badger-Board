@@ -3,7 +3,7 @@
 ## Teck Stack 
 Tech Stack
 
-Frontend: React (or your framework) hosted on AWS S3 and distributed via CloudFront.
+Frontend: React hosted on AWS S3 and distributed via CloudFront.
 
 Backend: Node.js with TypeScript, running on AWS Fargate (ECS).
 
@@ -23,7 +23,7 @@ To minimize latency for real-time pixel updates, the server maintains active boa
 
 Serverless Frontend: The frontend is decoupled from the API, hosted in an S3 bucket and cached globally via CloudFront for fast load times.
 
-Containerized Backend: The Node.js environment is containerized and managed by an AWS Application Load Balancer (ALB) and Fargate, allowing for easy scaling (autoscalling is not yet implemeted).
+Containerized Backend: The Node.js environment is containerized and managed by an AWS Application Load Balancer (ALB) and Fargate, allowing for easy scaling in the future.
 
 Persistent Storage: By utilizing AWS EFS, the SQLite database remains persistent across container restarts and deployments.
 
