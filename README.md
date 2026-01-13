@@ -1,4 +1,4 @@
-![alt text](./img/image1.png)
+
 
 ## Teck Stack 
 Tech Stack
