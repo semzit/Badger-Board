@@ -101,7 +101,6 @@ export class InfraStack extends Construct {
     });
 
     
-    
     service.targetGroup.configureHealthCheck({
       path: "/api/", 
       port: "8080"

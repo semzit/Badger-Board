@@ -6,6 +6,12 @@ import { Auth, Board } from "../types/types";
 import { LatLon, toLatLon } from "geolocation-utils"
 import { loadBoard, deleteBoardDb } from "../services/dbService";
 
+/**
+ * Get board for an id 
+ * @param req 
+ * @param res 
+ * @param next 
+ */
 export const getBoard = (req : Request, res: Response, next : NextFunction) => {
     try{
         console.log("Get board request received"); 
@@ -20,6 +26,12 @@ export const getBoard = (req : Request, res: Response, next : NextFunction) => {
     }
 }; 
 
+/**
+ * Authenticate a users location and pass ID to user
+ * @param req
+ * @param res 
+ * @param next 
+ */
 export const authenticate = (req: Request, res: Response, next : NextFunction) => {
     try{
         let { coords } = req.body;
@@ -53,6 +65,12 @@ export const health = (req: Request, res: Response, next : NextFunction) => {
     }
 }; 
 
+/**
+ * Update a board 
+ * @param req 
+ * @param res 
+ * @param next 
+ */
 export const setBoard = async (req: Request, res: Response, next : NextFunction) => {
     try{
         console.log("setBoard request received");
@@ -92,6 +110,12 @@ export const setBoard = async (req: Request, res: Response, next : NextFunction)
     }
 }; 
 
+/**
+ * Delete board controller 
+ * @param req 
+ * @param res 
+ * @param next 
+ */
 export const deleteBoard =  async (req: Request, res: Response, next : NextFunction) => {
     try {
         console.log("deleteBoard request received"); 
@@ -111,6 +135,12 @@ export const deleteBoard =  async (req: Request, res: Response, next : NextFunct
     }
 }; 
 
+/**
+ * Get names of available buildings
+ * @param req 
+ * @param res 
+ * @param next 
+ */
 export const getBoardNames = async (req: Request, res: Response, next : NextFunction) => {
     try{
         console.log("getBoards request received"); 

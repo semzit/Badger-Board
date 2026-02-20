@@ -32,9 +32,8 @@ export const start = () : void => {
                     updatePixel(building, x, y, color); 
                     const board = findBoard(building)
                     incrementUpdates(building); 
-                    if (board.updates > 20){  // update the board data in the database after 20 updates to board
+                    if (board.updates % 20 == 0){  // update the board data in the database after 20 updates to board
                         updateDb(building, board); 
-                        resetUpdates(building); 
                     }
                     setClient(userId , ws); 
                     wss.clients.forEach((client) => {

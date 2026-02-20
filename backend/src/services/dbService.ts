@@ -5,6 +5,9 @@ import { toLatLon, LatLon } from "geolocation-utils";
 
 let db : Database; 
 
+/**
+ * Create a new Database
+ */
 export const buildDb =  async() => {
   const dbPath = process.env.DB_PATH || './bruh.db'; 
 
@@ -27,7 +30,13 @@ export const buildDb =  async() => {
 
   await db.exec(creatDBschema);  
 }; 
- 
+
+/**
+ * Load new building into DB
+ * @param building - Name of building
+ * @param board -  Board of associated building
+ * @param coords - Coords of associated building
+ */
 export const loadBoard = async(building : string, board : number[][], coords: number[][]) => {
   const boardString = JSON.stringify(board); 
   const coordString = JSON.stringify(coords); 
@@ -40,6 +49,11 @@ export const loadBoard = async(building : string, board : number[][], coords: nu
   await db.run(update, [building, boardString, coordString]); 
 }
 
+/**
+ * Write update to DB
+ * @param building - Name of building
+ * @param board -  Board of associated building
+ */
 export const updateDb = async(building : Building, board : Board) => {
   console.log(`Updating db data for ${building}`);
   const {drawing} = board; 
@@ -103,6 +117,10 @@ export const readDb = async () : Promise<Board[]> => {
   
 }; 
 
+/**
+ * Remove building 
+ * @param building - Name of building
+ */
 export const deleteBoardDb = async (building : string) : Promise<void> => {
   const deleteBoardSQL = 'DELETE FROM boards WHERE building = ?'; 
   await db.run(deleteBoardSQL, [building]); 
