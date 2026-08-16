@@ -1,0 +1,9 @@
+node_modules
+dist
+build
+coverage
+cdk.out
+frontend/docs
+docs
+pnpm-lock.yaml
+apps/frontend/docs

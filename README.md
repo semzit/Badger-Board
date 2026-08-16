@@ -4,8 +4,8 @@
 
 Badger Board is a geographically enabled, real-time collaborative whiteboarding application. Built with TypeScript and Node.js, it leverages WebSockets for millisecond pixel updates and a containerized AWS architecture to provide a seamless, persistent drawing experience for multiple users.
 
+## Teck Stack
 
-## Teck Stack 
 Tech Stack
 
 Frontend: React hosted on AWS S3 and distributed via CloudFront.
@@ -33,9 +33,8 @@ Containerized Backend: The Node.js environment is containerized and managed by a
 Persistent Storage: By utilizing AWS EFS, the SQLite database remains persistent across container restarts and deployments.
 
 ### Images
+
 ![alt text](./img/image2.png)
 
 ![alt text](./img/image3.png)
 ![alt text](./img/image4.png)
-
-
