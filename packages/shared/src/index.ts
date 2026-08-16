@@ -2,8 +2,8 @@
  * Badger Board shared API contract.
  *
  * The REST and WebSocket wire shapes shared by `@badger/api` and
- * `@badger/frontend`. Keep this file free of runtime dependencies so it
- * type-checks and builds everywhere.
+ * `@badger/frontend`. Defined as Zod schemas so both sides can validate
+ * at runtime; the exported types are derived via `z.infer`.
  *
  * Conventions:
  * - Colors are normalized hex strings, e.g. "#ff0000".
@@ -11,91 +11,110 @@
  * - WebSocket messages are discriminated unions on the `type` field.
  */
 
+import { z } from "zod";
+
 /** Geographic coordinate (WGS84). */
-export type LatLon = {
-  latitude: number;
-  longitude: number;
-};
+export const LatLonSchema = z.object({
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180),
+});
+export type LatLon = z.infer<typeof LatLonSchema>;
 
 /** Dimensions of a drawing grid. */
-export type BoardSize = {
-  width: number;
-  height: number;
-};
+export const BoardSizeSchema = z.object({
+  width: z.number().int().positive(),
+  height: z.number().int().positive(),
+});
+export type BoardSize = z.infer<typeof BoardSizeSchema>;
 
 /** A single pixel color as a normalized hex string, e.g. "#ff0000". */
-export type Color = string;
-
-/** 2D grid of pixels, indexed `drawing[row][col]`. */
-export type Drawing = Color[][];
-
-/** A board's full state. */
-export type Board = {
-  name: string;
-  drawing: Drawing;
-  /** Building boundary polygon vertices, in order. */
-  coords: LatLon[];
-  size: BoardSize;
-  /** Total number of pixel updates applied. */
-  updates: number;
-  /** Unix epoch milliseconds of the last write. */
-  updatedAt: number;
-};
-
-/** Lightweight board metadata for list endpoints. */
-export type BoardSummary = {
-  name: string;
-  size: BoardSize;
-  updates: number;
-  updatedAt: number;
-};
+export const ColorSchema = z
+  .string()
+  .regex(/^#[0-9a-fA-F]{6}$/, "color must be a hex string like #ff0000");
+export type Color = z.infer<typeof ColorSchema>;
 
 /** A single pixel write. */
-export type PixelUpdate = {
-  x: number;
-  y: number;
-  color: Color;
-};
+export const PixelUpdateSchema = z.object({
+  x: z.number().int().nonnegative(),
+  y: z.number().int().nonnegative(),
+  color: ColorSchema,
+});
+export type PixelUpdate = z.infer<typeof PixelUpdateSchema>;
+
+/** 2D grid of pixels, indexed `drawing[row][col]`. */
+export const DrawingSchema = z.array(z.array(ColorSchema));
+export type Drawing = z.infer<typeof DrawingSchema>;
+
+/** A board's full state. */
+export const BoardSchema = z.object({
+  name: z.string().min(1),
+  drawing: DrawingSchema,
+  /** Building boundary polygon vertices, in order. */
+  coords: z.array(LatLonSchema),
+  size: BoardSizeSchema,
+  /** Total number of pixel updates applied. */
+  updates: z.number().int().nonnegative(),
+  /** Unix epoch milliseconds of the last write. */
+  updatedAt: z.number().int().nonnegative(),
+});
+export type Board = z.infer<typeof BoardSchema>;
+
+/** Lightweight board metadata for list endpoints. */
+export const BoardSummarySchema = BoardSchema.pick({
+  name: true,
+  size: true,
+  updates: true,
+  updatedAt: true,
+});
+export type BoardSummary = z.infer<typeof BoardSummarySchema>;
 
 /** POST /api/sessions */
-export type CreateSessionRequest = {
-  coords: LatLon;
-};
+export const CreateSessionRequestSchema = z.object({
+  coords: LatLonSchema,
+});
+export type CreateSessionRequest = z.infer<typeof CreateSessionRequestSchema>;
 
 /** Response for POST /api/sessions (201) or error (404 when outside any board). */
-export type CreateSessionResponse = {
-  sessionId: string;
-  building: string;
-};
+export const CreateSessionResponseSchema = z.object({
+  sessionId: z.string().uuid(),
+  building: z.string().min(1),
+});
+export type CreateSessionResponse = z.infer<typeof CreateSessionResponseSchema>;
 
 /** PATCH /api/boards/:name/pixels */
-export type UpdatePixelsRequest = {
-  pixels: PixelUpdate[];
-};
+export const UpdatePixelsRequestSchema = z.object({
+  pixels: z.array(PixelUpdateSchema).min(1),
+});
+export type UpdatePixelsRequest = z.infer<typeof UpdatePixelsRequestSchema>;
 
 /** WebSocket client -> server. */
-export type WsPaintMessage = {
-  type: "paint";
-  sessionId: string;
-  x: number;
-  y: number;
-  color: Color;
-};
+export const WsPaintMessageSchema = z.object({
+  type: z.literal("paint"),
+  sessionId: z.string().uuid(),
+  x: z.number().int().nonnegative(),
+  y: z.number().int().nonnegative(),
+  color: ColorSchema,
+});
+export type WsPaintMessage = z.infer<typeof WsPaintMessageSchema>;
 
-export type WsClientMessage = WsPaintMessage;
+export const WsClientMessageSchema = z.discriminatedUnion("type", [WsPaintMessageSchema]);
+export type WsClientMessage = z.infer<typeof WsClientMessageSchema>;
 
 /** WebSocket server -> client. */
-export type WsUpdateMessage = {
-  type: "update";
-  x: number;
-  y: number;
-  color: Color;
-};
+export const WsUpdateMessageSchema = z.object({
+  type: z.literal("update"),
+  x: z.number().int().nonnegative(),
+  y: z.number().int().nonnegative(),
+  color: ColorSchema,
+});
+export type WsUpdateMessage = z.infer<typeof WsUpdateMessageSchema>;
 
-export type WsServerMessage = WsUpdateMessage;
+export const WsServerMessageSchema = z.discriminatedUnion("type", [WsUpdateMessageSchema]);
+export type WsServerMessage = z.infer<typeof WsServerMessageSchema>;
 
 /** Standard error payload returned by the REST API. */
-export type ApiError = {
-  error: string;
-  message: string;
-};
+export const ApiErrorSchema = z.object({
+  error: z.string(),
+  message: z.string(),
+});
+export type ApiError = z.infer<typeof ApiErrorSchema>;
