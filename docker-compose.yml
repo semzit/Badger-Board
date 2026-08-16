@@ -12,7 +12,7 @@ services:
 
   # The Frontend Service (React + Nginx)
   frontend:
-    build: 
+    build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
