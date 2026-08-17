@@ -19,9 +19,10 @@ export class Hub {
   private subscriber: Redis;
   private channelRefCounts = new Map<string, number>();
 
-  constructor(server: HttpServer) {
+  constructor(server: HttpServer, subscriber?: Redis) {
     this.wss = new WebSocketServer({ server, path: "/ws" });
-    this.subscriber = new Redis(config.redisUrl, { lazyConnect: true, maxRetriesPerRequest: 1 });
+    this.subscriber =
+      subscriber ?? new Redis(config.redisUrl, { lazyConnect: true, maxRetriesPerRequest: 1 });
 
     this.wss.on("connection", (ws) => {
       const state: ConnectionState = { boards: new Set(), ws };
@@ -127,7 +128,9 @@ export class Hub {
   }
 
   async start(): Promise<void> {
-    await this.subscriber.connect();
+    if (this.subscriber.status === "wait") {
+      await this.subscriber.connect();
+    }
   }
 
   async close(): Promise<void> {
