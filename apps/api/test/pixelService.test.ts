@@ -1,3 +1,4 @@
+import { Redis } from "ioredis";
 import RedisMock from "ioredis-mock";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { getRedis, setRedis } from "../src/redis/client";
@@ -5,7 +6,7 @@ import { createBoard } from "../src/services/boardService";
 import { PixelOutOfBoundsError, applyPixels } from "../src/services/pixelService";
 
 describe("pixelService", () => {
-  let redis: RedisMock;
+  let redis: Redis;
 
   beforeEach(async () => {
     redis = new RedisMock();

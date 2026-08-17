@@ -1,3 +1,4 @@
+import { Redis } from "ioredis";
 import RedisMock from "ioredis-mock";
 import request from "supertest";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
@@ -20,7 +21,7 @@ const createBoard = (name = "tower-a") =>
     .send({ name, coords, size: { width: 2, height: 2 } });
 
 describe("API", () => {
-  let redis: RedisMock;
+  let redis: Redis;
 
   beforeEach(() => {
     redis = new RedisMock();

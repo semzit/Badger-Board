@@ -1,3 +1,4 @@
+import { Redis } from "ioredis";
 import RedisMock from "ioredis-mock";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { setRedis } from "../src/redis/client";
@@ -18,7 +19,7 @@ const coords = [
 ];
 
 describe("boardService", () => {
-  let redis: RedisMock;
+  let redis: Redis;
 
   beforeEach(() => {
     redis = new RedisMock();

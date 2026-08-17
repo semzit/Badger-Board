@@ -1,3 +1,4 @@
+import { Redis } from "ioredis";
 import RedisMock from "ioredis-mock";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { setRedis } from "../src/redis/client";
@@ -12,7 +13,7 @@ const building = [
 ];
 
 describe("sessionService", () => {
-  let redis: RedisMock;
+  let redis: Redis;
 
   beforeEach(async () => {
     redis = new RedisMock();
