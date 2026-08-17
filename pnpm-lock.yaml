@@ -47,6 +47,9 @@ importers:
       ws:
         specifier: ^8.18.3
         version: 8.21.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@types/cors':
         specifier: ^2.8.19

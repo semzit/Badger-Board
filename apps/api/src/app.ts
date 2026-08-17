@@ -1,7 +1,7 @@
-import express from "express";
-import { router } from "./routes/routes";
-import { errorHandler } from "./middlewares/errorHandler";
 import cors from "cors";
+import express from "express";
+import { router } from "./routes";
+import { errorHandler } from "./middleware/errorHandler";
 
 export const app = express();
 
@@ -9,12 +9,10 @@ app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost",
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-admin-key"],
   }),
 );
-
-//app.options('*', cors());
 
 app.use(express.json());
 
