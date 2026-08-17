@@ -1,12 +1,24 @@
 services:
-  # The Backend Service (Node.js/Express + WebSockets)
+  # Redis backing store
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  # The Backend Service (Express + WebSockets on one port, backed by Redis)
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
     ports:
       - "8080:8080"
-      - "8081:8081"
     environment:
-      - ADMIN_PASSWORD=1234
+      - ADMIN_KEY=change-me
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
     networks:
       - app-network
 
