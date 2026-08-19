@@ -1,22 +1,17 @@
+import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import * as cdk from "aws-cdk-lib/core";
-import { Construct } from "constructs";
+import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
-import * as efs from "aws-cdk-lib/aws-efs";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as ecsp from "aws-cdk-lib/aws-ecs-patterns";
-import * as elbv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import * as iam from "aws-cdk-lib/aws-iam";
-import { Repository } from "aws-cdk-lib/aws-ecr";
-import { BackupPlan } from "aws-cdk-lib/aws-backup";
+import * as elasticache from "aws-cdk-lib/aws-elasticache";
+import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
 import * as route53 from "aws-cdk-lib/aws-route53";
-import * as acm from "aws-cdk-lib/aws-certificatemanager";
-import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
+import * as s3 from "aws-cdk-lib/aws-s3";
 import * as s3deploy from "aws-cdk-lib/aws-s3-deployment";
 import * as targets from "aws-cdk-lib/aws-route53-targets";
-import * as cloudfront_origins from "aws-cdk-lib/aws-cloudfront-origins";
-import { CfnOutput, Duration, RemovalPolicy, Stack } from "aws-cdk-lib";
-import * as s3 from "aws-cdk-lib/aws-s3";
-import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
+import { CfnOutput, Duration, RemovalPolicy } from "aws-cdk-lib";
+import { Construct } from "constructs";
 
 export interface StaticSiteProps {
   domainName: string;
@@ -36,26 +31,25 @@ export class InfraStack extends Construct {
       subnetConfiguration: [{ name: "Public", subnetType: ec2.SubnetType.PUBLIC }],
     });
 
-    const fileSystem = new efs.FileSystem(this, "BadgerBoardFS", {
-      vpc: vpc,
-      encrypted: true,
-      lifecyclePolicy: efs.LifecyclePolicy.AFTER_14_DAYS,
-      performanceMode: efs.PerformanceMode.GENERAL_PURPOSE,
-      throughputMode: efs.ThroughputMode.BURSTING,
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    // Redis (ElastiCache) for the backend
+    const redisSecurityGroup = new ec2.SecurityGroup(this, "RedisSecurityGroup", {
+      vpc,
+      description: "Allow Redis access from the backend ECS service",
     });
 
-    fileSystem.addToResourcePolicy(
-      new iam.PolicyStatement({
-        actions: ["elasticfilesystem:ClientMount"],
-        principals: [new iam.AnyPrincipal()],
-        conditions: {
-          Bool: {
-            "elasticfilesystem:AccessedViaMountTarget": "true",
-          },
-        },
-      }),
-    );
+    const redisSubnetGroup = new elasticache.CfnSubnetGroup(this, "RedisSubnetGroup", {
+      description: "Subnet group for BadgerBoard Redis",
+      subnetIds: vpc.publicSubnets.map((subnet) => subnet.subnetId),
+    });
+
+    const redis = new elasticache.CfnCacheCluster(this, "BadgerBoardRedis", {
+      engine: "redis",
+      cacheNodeType: "cache.t3.micro",
+      numCacheNodes: 1,
+      port: 6379,
+      cacheSubnetGroupName: redisSubnetGroup.ref,
+      vpcSecurityGroupIds: [redisSecurityGroup.securityGroupId],
+    });
 
     // ECS cluster
     const cluster = new ecs.Cluster(this, "BadgerBoardCluster", {
@@ -65,28 +59,17 @@ export class InfraStack extends Construct {
     const taskDef = new ecs.FargateTaskDefinition(this, "BadgerBoardTaskDef", {
       memoryLimitMiB: 1024,
       cpu: 512,
-      volumes: [
-        {
-          name: "boards",
-          efsVolumeConfiguration: {
-            fileSystemId: fileSystem.fileSystemId,
-          },
-        },
-      ],
     });
 
     const backendContainer = taskDef.addContainer("BackendContainer", {
-      image: ecs.ContainerImage.fromAsset("../backend"),
-      portMappings: [{ containerPort: 8080 }, { containerPort: 8081 }],
+      image: ecs.ContainerImage.fromAsset("../../apps/api"),
+      portMappings: [{ containerPort: 8080 }],
     });
 
     backendContainer.addEnvironment("FRONTEND_URL", "https://" + siteDomain);
-
-    backendContainer.addMountPoints({
-      sourceVolume: "boards",
-      containerPath: "/boards",
-      readOnly: false,
-    });
+    backendContainer.addEnvironment("REDIS_URL", `redis://${redis.attrRedisEndpointAddress}:6379`);
+    // TODO: override ADMIN_KEY with a real secret in production
+    backendContainer.addEnvironment("ADMIN_KEY", "CHANGE_ME_IN_PROD");
 
     const service = new ecsp.ApplicationLoadBalancedFargateService(this, "BadgerBoardService", {
       cluster: cluster,
@@ -96,42 +79,16 @@ export class InfraStack extends Construct {
     });
 
     service.targetGroup.configureHealthCheck({
-      path: "/api/",
+      path: "/api/health",
       port: "8080",
     });
 
     service.service.connections.allowFrom(service.loadBalancer, ec2.Port.tcp(8080));
-
-    service.service.connections.allowFrom(service.loadBalancer, ec2.Port.tcp(8081));
-
-    service.listener.addTargets("ApiTarget", {
-      priority: 10,
-      conditions: [elbv2.ListenerCondition.pathPatterns(["/api*"])],
-      protocol: elbv2.ApplicationProtocol.HTTP,
-      targets: [
-        service.service.loadBalancerTarget({
-          containerName: backendContainer.containerName,
-          containerPort: 8080,
-        }),
-      ],
-      healthCheck: { path: "/api/", port: "8080" },
-    });
-
-    service.listener.addTargets("WsTarget", {
-      priority: 20,
-      conditions: [elbv2.ListenerCondition.pathPatterns(["/ws*"])],
-      protocol: elbv2.ApplicationProtocol.HTTP,
-      targets: [
-        service.service.loadBalancerTarget({
-          containerName: backendContainer.containerName,
-          containerPort: 8081,
-        }),
-      ],
-      healthCheck: { path: "/api/", port: "8080" },
-    });
-
-    fileSystem.grantRootAccess(service.taskDefinition.taskRole.grantPrincipal);
-    fileSystem.connections.allowDefaultPortFrom(service.service.connections);
+    service.service.connections.allowTo(
+      redisSecurityGroup,
+      ec2.Port.tcp(6379),
+      "Allow Redis access",
+    );
 
     const zone = route53.HostedZone.fromLookup(this, "Zone", { domainName: props.domainName });
 
@@ -180,7 +137,7 @@ export class InfraStack extends Construct {
         },
       ],
       defaultBehavior: {
-        origin: cloudfront_origins.S3BucketOrigin.withOriginAccessControl(siteBucket),
+        origin: origins.S3BucketOrigin.withOriginAccessControl(siteBucket),
         compress: true,
         allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
@@ -211,7 +168,7 @@ export class InfraStack extends Construct {
 
     // Deploy site contents to S3 bucket
     new s3deploy.BucketDeployment(this, "DeployWithInvalidation", {
-      sources: [s3deploy.Source.asset("../frontend/docs")],
+      sources: [s3deploy.Source.asset("../../apps/frontend/docs")],
       destinationBucket: siteBucket,
       distribution,
       distributionPaths: ["/*"],
