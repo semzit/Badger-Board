@@ -16,6 +16,7 @@ import { Construct } from "constructs";
 export interface StaticSiteProps {
   domainName: string;
   siteSubDomain: string;
+  adminKey: string;
 }
 
 export class InfraStack extends Construct {
@@ -68,8 +69,7 @@ export class InfraStack extends Construct {
 
     backendContainer.addEnvironment("FRONTEND_URL", "https://" + siteDomain);
     backendContainer.addEnvironment("REDIS_URL", `redis://${redis.attrRedisEndpointAddress}:6379`);
-    // TODO: override ADMIN_KEY with a real secret in production
-    backendContainer.addEnvironment("ADMIN_KEY", "CHANGE_ME_IN_PROD");
+    backendContainer.addEnvironment("ADMIN_KEY", props.adminKey);
 
     const service = new ecsp.ApplicationLoadBalancedFargateService(this, "BadgerBoardService", {
       cluster: cluster,

@@ -10,6 +10,7 @@ import { InfraStack } from "../lib/infra-stack";
  *   "context": {
  *     "domain": "mystaticsite.com",
  *     "subdomain": "www",
+ *     "adminKey": "change-me",
  *     "accountId": "1234567890",
  *   }
  * }
@@ -21,6 +22,7 @@ class MyInfraStack extends cdk.Stack {
     new InfraStack(this, "InfraStack", {
       domainName: this.node.tryGetContext("domain"),
       siteSubDomain: this.node.tryGetContext("subdomain"),
+      adminKey: this.node.tryGetContext("adminKey") ?? process.env.ADMIN_KEY ?? "",
     });
   }
 }
