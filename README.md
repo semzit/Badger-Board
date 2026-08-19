@@ -1,40 +1,107 @@
-![alt text](./img/image1.png)
+# Badger Board
 
-## Overview
+A geographically enabled, real-time collaborative whiteboarding application. TypeScript end-to-end in a pnpm monorepo, backed by Redis, with real-time pixel updates over WebSockets.
 
-Badger Board is a geographically enabled, real-time collaborative whiteboarding application. Built with TypeScript and Node.js, it leverages WebSockets for millisecond pixel updates and a containerized AWS architecture to provide a seamless, persistent drawing experience for multiple users.
+## Tech Stack
 
-## Teck Stack
+- **Frontend:** React 19 + Vite, TypeScript, Tailwind CSS, shadcn/ui, TanStack Query, axios
+- **Backend:** Node.js + TypeScript, Express, WebSockets (`ws`), zod validation
+- **Data:** Redis (ioredis) — board state, pixel hash, and sessions
+- **Infrastructure:** AWS (S3 + CloudFront for the frontend, ECS/Fargate for the API, ElastiCache for Redis) via AWS CDK
+- **Tooling:** pnpm workspaces, oxlint, Prettier, vitest, commitlint, husky
 
-Tech Stack
+## Repository Structure
 
-Frontend: React hosted on AWS S3 and distributed via CloudFront.
+```
+apps/
+  api/       Express REST + WebSocket API (controllers -> services -> redis)
+  frontend/  React + Vite single-page app (components, hooks, features)
+  infra/     AWS CDK stack (ElastiCache, ECS/Fargate, S3/CloudFront)
+```
 
-Backend: Node.js with TypeScript, running on AWS Fargate (ECS).
+## Quickstart (local development)
 
-Database: SQLite persisted via AWS EFS (Elastic File System).
+### Prerequisites
 
-Real-time: WebSockets for low-latency pixel updates.
+- Node.js **20+** and **pnpm 9+** (`corepack enable` works if you have Node 20+)
+- **Redis 7+** — either a local install, or Docker (recommended)
 
-API: Express.js for initial state hydration.
+### Option A — Docker Compose (full stack, fastest)
 
-## System Architecture
+Everything (Redis, API, frontend) runs in containers:
 
-### Performance Optimization
+```bash
+docker compose up --build
+```
 
-To minimize latency for real-time pixel updates, the server maintains active board states and IDs in-memory rather than querying the database for every change. This ensures that the high-frequency WebSocket traffic remains fluid, while the SQLite database provides a persistent source (updated every 20 pixel updates) for boards incase the server goes down.
+- Frontend: http://localhost
+- API: http://localhost:8080/api
+- WebSocket: ws://localhost:8080/ws
+- Redis: localhost:6379
 
-### Infrastructure & Security
+### Option B — Run natively with pnpm
 
-Serverless Frontend: The frontend is decoupled from the API, hosted in an S3 bucket and cached globally via CloudFront for fast load times.
+Start a Redis first (Docker recommended):
 
-Containerized Backend: The Node.js environment is containerized and managed by an AWS Application Load Balancer (ALB) and Fargate, allowing for easy scaling in the future.
+```bash
+docker run -d -p 6379:6379 redis:7-alpine
+```
 
-Persistent Storage: By utilizing AWS EFS, the SQLite database remains persistent across container restarts and deployments.
+Install dependencies and start the API + frontend in watch mode:
+
+```bash
+pnpm install
+pnpm dev
+```
+
+- Frontend (Vite dev server): http://localhost:5173 — `/api` and `/ws` are proxied to the API automatically
+- API: http://localhost:8080
+
+### Configuration
+
+Environment variables are optional for local dev (sensible defaults are provided). Copy an example file to opt in:
+
+```bash
+cp apps/api/.env.example apps/api/.env
+cp apps/frontend/.env.example apps/frontend/.env
+```
+
+| Variable              | Default                  | App      | Description                                                               |
+| --------------------- | ------------------------ | -------- | ------------------------------------------------------------------------- |
+| `PORT`                | `8080`                   | api      | HTTP port the API listens on                                              |
+| `REDIS_URL`           | `redis://localhost:6379` | api      | Redis connection string                                                   |
+| `ADMIN_KEY`           | _(empty)_                | api      | Authorizes admin endpoints (`x-admin-key` header); leave empty to disable |
+| `FRONTEND_URL`        | `http://localhost`       | api      | CORS origin allowed for the browser frontend                              |
+| `SESSION_TTL_SECONDS` | `600`                    | api      | Session TTL in seconds                                                    |
+| `VITE_API_BASE_URL`   | `/api`                   | frontend | API base URL (use `/api` with the dev proxy)                              |
+
+## Common Commands
+
+Run from the repo root:
+
+```bash
+pnpm dev         # run API + frontend in watch mode
+pnpm build       # build all apps
+pnpm typecheck   # type-check all apps
+pnpm lint        # lint all apps
+pnpm test        # run all tests
+pnpm format      # format with Prettier
+```
+
+Run a command for a single app with `pnpm --filter`:
+
+```bash
+pnpm --filter @badger/api test
+pnpm --filter @badger/frontend build
+```
+
+## Architecture
+
+The API exposes a small REST surface for listing/creating boards and sessions, and a single WebSocket endpoint (`/ws`) for real-time paint updates. Pixel writes are bounds-checked, persisted to a Redis hash, broadcast to subscribers over Redis Pub/Sub, and delivered to connected clients. Sessions map a geographic coordinate to a building polygon using point-in-polygon geolocation.
 
 ### Images
 
+![alt text](./img/image1.png)
 ![alt text](./img/image2.png)
-
 ![alt text](./img/image3.png)
 ![alt text](./img/image4.png)
