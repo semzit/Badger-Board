@@ -1,6 +1,7 @@
 import { Board, BoardSize, BoardSummary, LatLon } from "../schemas";
 import * as repo from "../redis/boardRepository";
 import { BoardMeta } from "../redis/boardRepository";
+import { hydrateDrawing, metaToSummary } from "../utils/board";
 
 export class BoardNotFoundError extends Error {
   constructor(name: string) {
@@ -8,31 +9,6 @@ export class BoardNotFoundError extends Error {
     this.name = "BoardNotFoundError";
   }
 }
-
-export const WHITE = "#ffffff";
-
-const metaToSummary = (meta: BoardMeta): BoardSummary => ({
-  name: meta.name,
-  size: meta.size,
-  updates: meta.updates,
-  updatedAt: meta.updatedAt,
-});
-
-/**
- * Hydrate a full board: meta JSON + HGETALL pixels mapped to a 2D grid.
- * Missing cells are filled white.
- */
-const hydrateDrawing = (meta: BoardMeta, pixels: Map<string, string>): string[][] => {
-  const drawing: string[][] = [];
-  for (let y = 0; y < meta.size.height; y++) {
-    const row: string[] = [];
-    for (let x = 0; x < meta.size.width; x++) {
-      row.push(pixels.get(`${x}:${y}`) ?? WHITE);
-    }
-    drawing.push(row);
-  }
-  return drawing;
-};
 
 export const createBoard = async (
   name: string,

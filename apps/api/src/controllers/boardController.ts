@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { CreateBoardRequest, UpdatePixelsRequest } from "../schemas";
+import { CreateBoardRequestSchema, UpdatePixelsRequestSchema } from "../schemas";
 import {
   createBoard as createBoardService,
   deleteBoard as deleteBoardService,
@@ -27,7 +27,7 @@ export const createBoard = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { name, coords, size } = req.body as CreateBoardRequest;
+    const { name, coords, size } = CreateBoardRequestSchema.parse(req.body);
     const board = await createBoardService(name, coords, size);
     res.status(201).json(board);
   } catch (err) {
@@ -62,7 +62,7 @@ export const updatePixels = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { pixels } = req.body as UpdatePixelsRequest;
+    const { pixels } = UpdatePixelsRequestSchema.parse(req.body);
     await applyPixels(String(req.params.name), pixels);
     res.status(204).end();
   } catch (err) {

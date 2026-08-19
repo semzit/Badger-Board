@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { CreateBoardRequestSchema, UpdatePixelsRequestSchema } from "../schemas";
 import {
   createBoard,
   deleteBoard,
@@ -9,13 +8,12 @@ import {
   updatePixels,
 } from "../controllers/boardController";
 import { adminAuth } from "../middleware/adminAuth";
-import { validate } from "../middleware/validate";
 
 export const boardRoutes = Router();
 
 boardRoutes.get("/", listBoards);
-boardRoutes.post("/", adminAuth, validate(CreateBoardRequestSchema), createBoard);
+boardRoutes.post("/", adminAuth, createBoard);
 boardRoutes.get("/:name", getBoard);
 boardRoutes.delete("/:name", adminAuth, deleteBoard);
-boardRoutes.patch("/:name/pixels", validate(UpdatePixelsRequestSchema), updatePixels);
+boardRoutes.patch("/:name/pixels", updatePixels);
 boardRoutes.get("/:name/pixels", getPixels);

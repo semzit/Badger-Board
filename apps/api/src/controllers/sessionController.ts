@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { CreateSessionRequest, CreateSessionResponseSchema } from "../schemas";
+import { CreateSessionRequestSchema, CreateSessionResponseSchema } from "../schemas";
 import { createSession as createSessionForCoords } from "../services/sessionService";
 
 export const createSession = async (
@@ -8,7 +8,7 @@ export const createSession = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { coords } = req.body as CreateSessionRequest;
+    const { coords } = CreateSessionRequestSchema.parse(req.body);
     const session = await createSessionForCoords(coords);
     res.status(201).json(CreateSessionResponseSchema.parse(session));
   } catch (err) {
