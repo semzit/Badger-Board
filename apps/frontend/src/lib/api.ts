@@ -1,7 +1,5 @@
-import { create, isAxiosError } from "axios";
 import { z } from "zod";
 import {
-  type ApiError,
   type Board,
   BoardSchema,
   type BoardSize,
@@ -13,59 +11,14 @@ import {
   type LatLon,
   type PixelUpdate,
 } from "@badger/shared";
-import { ADMIN_KEY_HEADER, API_BASE_URL } from "../config";
+import { ADMIN_KEY_HEADER } from "../config";
+import { api, validate } from "./apiClient";
 
 export type CreateBoardRequest = {
   name: string;
   coords: LatLon[];
   size: BoardSize;
 };
-
-export type ApiErrorLike = ApiError & { status?: number };
-
-export const api = create({ baseURL: API_BASE_URL });
-
-api.interceptors.response.use(
-  (response) => response,
-  (error: unknown) => {
-    if (isAxiosError<ApiError>(error)) {
-      const status = error.response?.status;
-      const data = error.response?.data;
-      const normalized: ApiErrorLike = {
-        error: data?.error ?? "request_failed",
-        message: data?.message ?? error.message,
-        status,
-      };
-      return Promise.reject(normalized);
-    }
-    return Promise.reject({
-      error: "request_failed",
-      message: error instanceof Error ? error.message : "Unknown request error",
-    } satisfies ApiErrorLike);
-  },
-);
-
-export function isApiError(value: unknown): value is ApiErrorLike {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "error" in value &&
-    typeof value.error === "string" &&
-    "message" in value &&
-    typeof value.message === "string"
-  );
-}
-
-function validate<T>(schema: z.ZodType<T>, data: unknown): T {
-  const result = schema.safeParse(data);
-  if (!result.success) {
-    throw {
-      error: "invalid_response",
-      message: `Invalid server response: ${result.error.message}`,
-    } satisfies ApiErrorLike;
-  }
-  return result.data;
-}
 
 export async function createSession(coords: LatLon): Promise<CreateSessionResponse> {
   const { data } = await api.post("/sessions", { coords });

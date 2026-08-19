@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { createBoard, deleteBoard, isApiError } from "@badger-board/lib/api";
-import { emptyVertices } from "@badger-board/lib/board";
+import { createBoard, deleteBoard } from "@badger-board/lib/api";
+import { isApiError } from "@badger-board/lib/apiClient";
 import {
   type AddFormValues,
   type RemoveFormValues,
+  addFormDefaults,
   createBoardSchema,
   removeBoardSchema,
+  removeFormDefaults,
 } from "./schemas";
 
 export type Status = { type: "success" | "danger"; message: string } | null;
@@ -21,17 +23,11 @@ export function useAdminBoards() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const addForm = useForm<AddFormValues>({
-    defaultValues: {
-      name: "",
-      adminKey: "",
-      width: "100",
-      height: "100",
-      vertices: emptyVertices(),
-    },
+    defaultValues: addFormDefaults,
   });
 
   const removeForm = useForm<RemoveFormValues>({
-    defaultValues: { name: "", adminKey: "" },
+    defaultValues: removeFormDefaults,
   });
 
   const handleAdd = addForm.handleSubmit(async (values) => {
