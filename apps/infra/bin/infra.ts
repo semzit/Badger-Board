@@ -7,12 +7,6 @@ import { InfraStack } from "../lib/infra-stack";
  * Use 'cdk synth -c domain=mystaticsite.com -c subdomain=www'
  * Or add the following to cdk.json:
  * {
- *   "context": {
- *     "domain": "mystaticsite.com",
- *     "subdomain": "www",
- *     "accountId": "1234567890",
- *   }
- * }
  **/
 class MyInfraStack extends cdk.Stack {
   constructor(parent: cdk.App, name: string, props: cdk.StackProps) {
@@ -21,6 +15,7 @@ class MyInfraStack extends cdk.Stack {
     new InfraStack(this, "InfraStack", {
       domainName: this.node.tryGetContext("domain"),
       siteSubDomain: this.node.tryGetContext("subdomain"),
+      adminKey: this.node.tryGetContext("adminKey") ?? process.env.ADMIN_KEY ?? "",
     });
   }
 }
