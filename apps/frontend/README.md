@@ -1,16 +1,35 @@
-# React + Vite
+# @badger/frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 + Vite single-page application for Badger Board. TypeScript, Tailwind CSS, shadcn/ui, TanStack Query, axios, and a WebSocket client for real-time paint updates.
 
-Currently, two official plugins are available:
+## Development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Run from the repo root so the workspace is picked up:
 
-## React Compiler
+```bash
+pnpm install
+pnpm dev
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The Vite dev server runs on http://localhost:5173 and proxies `/api` and `/ws` to the API on port 8080 (see `vite.config.ts`). Start the API first (see the root README).
 
-## Expanding the ESLint configuration
+## Configuration
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Frontend env vars are loaded by Vite from `apps/frontend/.env` (any `VITE_`-prefixed variable). Copy the example to opt in:
+
+```bash
+cp apps/frontend/.env.example apps/frontend/.env
+```
+
+| Variable            | Default | Description                                 |
+| ------------------- | ------- | ------------------------------------------- |
+| `VITE_API_BASE_URL` | `/api`  | API base URL; use `/api` with the dev proxy |
+
+## Commands
+
+```bash
+pnpm dev          # Vite dev server with HMR
+pnpm build        # production build (outputs to docs/, deployed by CDK)
+pnpm typecheck    # tsc type-check
+pnpm lint         # oxlint
+```

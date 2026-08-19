@@ -39,12 +39,10 @@ export const errorHandler = (
 ): void => {
   const known = mapKnownErrors(err);
   if (known) {
-    res
-      .status(known.status)
-      .json({
-        error: known.status === 400 ? "validation_error" : "not_found",
-        message: known.message,
-      });
+    res.status(known.status).json({
+      error: known.status === 400 ? "validation_error" : "not_found",
+      message: known.message,
+    });
     return;
   }
 

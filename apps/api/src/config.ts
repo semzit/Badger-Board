@@ -1,3 +1,6 @@
+// oxlint-disable-next-line import/no-unassigned-import
+import "dotenv/config";
+
 export const config = {
   port: Number(process.env.PORT) || 8080,
   redisUrl: process.env.REDIS_URL || "redis://localhost:6379",

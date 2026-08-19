@@ -1,14 +1,36 @@
-# Welcome to your CDK TypeScript project
+# @badger/infra
 
-This is a blank project for CDK development with TypeScript.
+AWS CDK stack for Badger Board. Provisioned with TypeScript.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+## What it deploys
 
-## Useful commands
+- **Redis (ElastiCache)** — cache cluster for the API
+- **ECS/Fargate service** — the Express API container behind an ALB
+- **S3 + CloudFront** — hosts the built frontend from `apps/frontend/docs`
 
-- `npm run build` compile typescript to js
-- `npm run watch` watch for changes and compile
-- `npm run test` perform the jest unit tests
-- `npx cdk deploy` deploy this stack to your default AWS account/region
-- `npx cdk diff` compare deployed stack with current state
-- `npx cdk synth` emits the synthesized CloudFormation template
+## Prerequisites
+
+- AWS credentials configured for your target account
+- Frontend built locally before deploying (the frontend is uploaded from `apps/frontend/docs`):
+  ```bash
+  pnpm --filter @badger/frontend build
+  ```
+
+## Configuration
+
+Pass values via CDK context flags, or add them to `cdk.json` under `"context"`:
+
+| Context / env                   | Description                                              |
+| ------------------------------- | -------------------------------------------------------- |
+| `-c domain=...`                 | Route 53 hosted zone domain                              |
+| `-c subdomain=...`              | Site subdomain (e.g. `www`)                              |
+| `-c adminKey=...` / `ADMIN_KEY` | Secret for admin endpoints (empty disables admin routes) |
+
+## Commands
+
+```bash
+pnpm --filter @badger/infra cdk synth   # emit CloudFormation template
+pnpm --filter @badger/infra cdk diff    # compare deployed stack with local
+pnpm --filter @badger/infra cdk deploy  # deploy the stack
+pnpm --filter @badger/infra typecheck   # tsc type-check
+```
