@@ -1,7 +1,7 @@
 import { WebSocket, WebSocketServer } from "ws";
 import { Update, WsWrite } from "../types/types";
 import { findBoard, incrementUpdates, updatePixel } from "../services/boardManager";
-import { findBuilding } from "../services/idManager";
+import { findBuilding } from "../types/idManager";
 import { setClient } from "../services/clientManager";
 import { updateDb } from "../services/dbService";
 

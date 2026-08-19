@@ -6,7 +6,7 @@ import {
   removeBoard,
   setBuilding,
 } from "../services/boardManager";
-import { findBuilding, setId } from "../services/idManager";
+import { findBuilding, setId } from "../types/idManager";
 import { randomUUID } from "crypto";
 import { Auth, Board } from "../types/types";
 import { LatLon, toLatLon } from "geolocation-utils";

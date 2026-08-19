@@ -7,7 +7,7 @@ import LandingPage from "./components/LandingPage";
 import { AdminPage } from "./features/admin/AdminPage";
 import OutsideRegion from "./components/OutsideRegion";
 
-import bg from "./img/new_bg.png";
+import bg from "./assets/new_bg.png";
 
 function BadgerBoard() {
   const [selectedColor, setSelectedColor] = useState("#000000");
