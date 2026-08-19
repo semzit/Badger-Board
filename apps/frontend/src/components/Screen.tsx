@@ -1,12 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
-import type { Color, WsUpdateMessage } from "@badger/shared";
-import { useBoardData } from "@/hooks/useBoardData";
-import { useBoardSocket } from "@/hooks/useBoardSocket";
+import { useBoardData } from "@badger-board/hooks/useBoardData";
+import { useBoardSocket } from "@badger-board/hooks/useBoardSocket";
+import { useBoardCanvas } from "@badger-board/hooks/useBoardCanvas";
 import "./Screen.css";
 
 const DEFAULT_SIZE = 100;
-
-type Ripple = { index: number; id: string };
 
 type ScreenProps = {
   selectedColor: string;
@@ -14,67 +11,31 @@ type ScreenProps = {
 
 function Screen({ selectedColor }: ScreenProps) {
   const { session, board } = useBoardData();
-  const [pixels, setPixels] = useState<Color[]>([]);
-  const [ripple, setRipple] = useState<Ripple | null>(null);
-  const [clicked, setClicked] = useState(false);
-  const [mouseMoved, setMouseMoved] = useState(false);
 
-  const pixelSize = 10;
   const width = board.data?.size.width ?? DEFAULT_SIZE;
   const height = board.data?.size.height ?? DEFAULT_SIZE;
 
-  const applyUpdate = useCallback(
-    (message: WsUpdateMessage) => {
-      setPixels((prev) => {
-        const index = message.x * width + message.y;
-        if (index < 0 || index >= prev.length) return prev;
-        const copy = [...prev];
-        copy[index] = message.color;
-        return copy;
-      });
-    },
-    [width],
-  );
+  const {
+    pixels,
+    ripple,
+    applyUpdate,
+    handleMouseDown,
+    handleMouseLeave,
+    handleMouseUp,
+    clearRipple,
+  } = useBoardCanvas(board.data?.drawing, width, height, selectedColor);
 
   const { isConnected, sendPaint } = useBoardSocket(applyUpdate);
 
-  useEffect(() => {
-    if (board.data) {
-      setPixels(board.data.drawing.flat());
+  const handleMouseUpOnGrid = (index: number) => {
+    const painted = handleMouseUp(index);
+    if (painted && session.data) {
+      sendPaint(session.data.sessionId, painted.x, painted.y, painted.color);
     }
-  }, [board.data]);
-
-  const handleMouseDown = () => {
-    setClicked(true);
-    setMouseMoved(false);
-  };
-
-  const handleMouseLeave = () => {
-    if (clicked) setMouseMoved(true);
-  };
-
-  const handleMouseUp = (index: number) => {
-    setClicked(false);
-
-    if (mouseMoved) return;
-
-    const x = Math.floor(index / width);
-    const y = index % width;
-
-    setPixels((prev) => {
-      const copy = [...prev];
-      copy[index] = selectedColor;
-      return copy;
-    });
-
-    if (session.data) {
-      sendPaint(session.data.sessionId, x, y, selectedColor);
-    }
-
-    setRipple({ index, id: crypto.randomUUID() });
   };
 
   const building = session.data?.building ?? "Loading...";
+  const pixelSize = 10;
 
   return (
     <div
@@ -88,13 +49,7 @@ function Screen({ selectedColor }: ScreenProps) {
         paddingTop: "40px",
       }}
     >
-      {/* The Board Name Section */}
-      <div
-        style={{
-          marginBottom: "20px",
-          textAlign: "center",
-        }}
-      >
+      <div style={{ marginBottom: "20px", textAlign: "center" }}>
         <h1
           style={{
             margin: 0,
@@ -110,7 +65,6 @@ function Screen({ selectedColor }: ScreenProps) {
         </p>
       </div>
 
-      {/* Pixel Grid */}
       <div
         style={{
           display: "grid",
@@ -133,12 +87,12 @@ function Screen({ selectedColor }: ScreenProps) {
               height: pixelSize,
               position: "relative",
             }}
-            onMouseUp={() => handleMouseUp(i)}
+            onMouseUp={() => handleMouseUpOnGrid(i)}
             onMouseDown={handleMouseDown}
             onMouseLeave={handleMouseLeave}
           >
             {ripple && ripple.index === i && (
-              <div key={ripple.id} className="ripple" onAnimationEnd={() => setRipple(null)} />
+              <div key={ripple.id} className="ripple" onAnimationEnd={clearRipple} />
             )}
           </div>
         ))}
