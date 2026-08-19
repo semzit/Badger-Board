@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { Button } from "react-bootstrap";
+import { Button } from "@badger-board/components/ui/button";
 
-function LandingPage({ onEnter, isExiting }) {
+type LandingPageProps = {
+  onEnter: () => void;
+  isExiting: boolean;
+};
+
+function LandingPage({ onEnter, isExiting }: LandingPageProps) {
   const [isPressed, setIsPressed] = useState(false);
 
   const handleClick = () => {
@@ -10,6 +15,7 @@ function LandingPage({ onEnter, isExiting }) {
       onEnter();
     }, 300);
   };
+
   return (
     <div
       style={{
@@ -76,7 +82,6 @@ function LandingPage({ onEnter, isExiting }) {
           3. Have fun!
         </p>
         <Button
-          variant="primary"
           size="lg"
           onClick={handleClick}
           disabled={isPressed}
@@ -96,31 +101,30 @@ function LandingPage({ onEnter, isExiting }) {
             transition: "all 0.1s ease",
             position: "relative",
             overflow: "hidden",
+            color: "#fff",
           }}
           onMouseEnter={(e) => {
             if (!isPressed) {
-              e.target.style.transform = "scale(1.05)";
-              e.target.style.boxShadow = "0 12px 30px rgba(197, 5, 12, 0.6)";
+              e.currentTarget.style.transform = "scale(1.05)";
+              e.currentTarget.style.boxShadow = "0 12px 30px rgba(197, 5, 12, 0.6)";
             }
           }}
           onMouseLeave={(e) => {
             if (!isPressed) {
-              e.target.style.transform = "scale(1)";
-              e.target.style.boxShadow = "0 8px 20px rgba(197, 5, 12, 0.5)";
+              e.currentTarget.style.transform = "scale(1)";
+              e.currentTarget.style.boxShadow = "0 8px 20px rgba(197, 5, 12, 0.5)";
             }
           }}
         >
           {isPressed ? (
-            <>
-              <span
-                style={{
-                  display: "inline-block",
-                  animation: "ripple 0.6s ease-out",
-                }}
-              >
-                Entering...
-              </span>
-            </>
+            <span
+              style={{
+                display: "inline-block",
+                animation: "ripple 0.6s ease-out",
+              }}
+            >
+              Entering...
+            </span>
           ) : (
             "Enter Board"
           )}

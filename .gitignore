@@ -6,6 +6,8 @@ node_modules/
 dist/
 build/
 *.tsbuildinfo
+# frontend build output (deployed to S3 by cdk; build locally before cdk deploy)
+apps/frontend/docs/
 
 # environment
 .env

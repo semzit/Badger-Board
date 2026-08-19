@@ -1,23 +1,18 @@
 import { useState } from "react";
-import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
-import "./App.css";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import Screen from "./components/Screen";
 import ColorSelector from "./components/ColorSelector";
 import LandingPage from "./components/LandingPage";
-import BuildingForm from "./components/BuildingForm";
+import { AdminPage } from "./features/admin/AdminPage";
 import OutsideRegion from "./components/OutsideRegion";
-import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 
-import bg from "./img/new_bg.png";
+import bg from "./assets/new_bg.png";
 
 function BadgerBoard() {
   const [selectedColor, setSelectedColor] = useState("#000000");
-  const [auth, setAuth] = useState(null);
-  const [building, setBuilding] = useState("morgridge-hall");
   const [showLanding, setShowLanding] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
-
-  //const { isConnected, message, send } = useWebSocket('ws://localhost:8080/ws')
 
   const handleEnterCanvas = () => {
     setIsExiting(true);
@@ -71,31 +66,6 @@ function BadgerBoard() {
         }}
       >
         <ColorSelector selectedColor={selectedColor} onColorSelect={setSelectedColor} />
-
-        {/**<Button onClick={async () => {
-          const token = await authenticate()
-          console.log('Got token:', token)
-          setAuth(token.auth)
-          const initialState = token.state
-        }}>
-          Authenticate
-        </Button>
-
-        <Button onClick={() => {
-          const x = document.getElementById('xCoord')?.value
-          const y = document.getElementById('yCoord')?.value
-          const color = selectedColor
-          const grid_data = send({ 
-            type: 'paint', 
-            auth: auth, 
-            building: building, 
-            x, 
-            y, 
-            color 
-          })
-        }}>
-          Send Update
-        </Button> */}
       </div>
     </div>
   );
@@ -106,7 +76,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<BadgerBoard />} />
-        <Route path="/admin" element={<BuildingForm />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="/outside" element={<OutsideRegion />} />
       </Routes>
     </BrowserRouter>

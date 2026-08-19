@@ -1,14 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Form, InputGroup } from "react-bootstrap";
 import { HexColorPicker } from "react-colorful";
+import { Input } from "@badger-board/components/ui/input";
 
-function ColorSelector({ selectedColor, onColorSelect }) {
+type ColorSelectorProps = {
+  selectedColor: string;
+  onColorSelect: (color: string) => void;
+};
+
+const HEX_PATTERN = /^#[0-9A-F]{6}$/i;
+
+function ColorSelector({ selectedColor, onColorSelect }: ColorSelectorProps) {
   const [inputValue, setInputValue] = useState(selectedColor);
   const [isValid, setIsValid] = useState(true);
   const [showPicker, setShowPicker] = useState(false);
   const [pickerColor, setPickerColor] = useState(selectedColor);
   const [justChanged, setJustChanged] = useState(false);
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const isUpdatingRef = useRef(false);
 
   useEffect(() => {
@@ -20,8 +27,8 @@ function ColorSelector({ selectedColor, onColorSelect }) {
 
   // Close picker when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setShowPicker(false);
       }
     };
@@ -35,11 +42,7 @@ function ColorSelector({ selectedColor, onColorSelect }) {
     };
   }, [showPicker]);
 
-  const isValidHexColor = (color) => {
-    return /^#[0-9A-F]{6}$/i.test(color);
-  };
-
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
 
     // Only allow valid hex characters (0-9, A-F, a-f, #)
@@ -63,7 +66,7 @@ function ColorSelector({ selectedColor, onColorSelect }) {
 
     setInputValue(value);
 
-    if (isValidHexColor(value)) {
+    if (HEX_PATTERN.test(value)) {
       setIsValid(true);
       setPickerColor(value.toUpperCase());
       onColorSelect(value.toUpperCase());
@@ -77,7 +80,7 @@ function ColorSelector({ selectedColor, onColorSelect }) {
   };
 
   const handlePickerChange = useCallback(
-    (color) => {
+    (color: string) => {
       const upperColor = color.toUpperCase();
 
       // Prevent update loop
@@ -102,7 +105,7 @@ function ColorSelector({ selectedColor, onColorSelect }) {
   );
 
   const togglePicker = () => {
-    setShowPicker(!showPicker);
+    setShowPicker((prev) => !prev);
   };
 
   return (
@@ -126,81 +129,74 @@ function ColorSelector({ selectedColor, onColorSelect }) {
           padding: "15px 20px",
           boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.1)",
           transition: "all 0.3s ease",
+          display: "flex",
+          alignItems: "center",
         }}
       >
-        <InputGroup style={{ width: "220px" }}>
-          <InputGroup.Text
-            className="p-0"
-            style={{
-              backgroundColor: "transparent",
-              border: "none",
-            }}
-          >
-            <div
-              className="rounded-circle"
-              onClick={togglePicker}
-              style={{
-                width: "45px",
-                height: "45px",
-                backgroundColor: isValid ? inputValue : "#6c757d",
-                border: "3px solid rgba(255, 255, 255, 0.3)",
-                boxShadow: isValid
-                  ? `0 4px 15px ${inputValue}44, 0 0 0 ${justChanged ? "8px" : "0px"} ${inputValue}33`
-                  : "0 4px 15px rgba(0,0,0,0.2)",
-                transition:
-                  "all 0.3s ease, background-color 0.5s ease, box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                transform: justChanged ? "scale(1.15)" : "scale(1)",
-                backdropFilter: "blur(5px)",
-                marginRight: "12px",
-                cursor: "pointer",
-                flexShrink: 0,
-              }}
-              onMouseEnter={(e) => {
-                if (!justChanged) {
-                  e.target.style.transform = "scale(1.05)";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!justChanged) {
-                  e.target.style.transform = "scale(1)";
-                }
-              }}
-            />
-          </InputGroup.Text>
+        <div
+          onClick={togglePicker}
+          style={{
+            width: "45px",
+            height: "45px",
+            backgroundColor: isValid ? inputValue : "#6c757d",
+            border: "3px solid rgba(255, 255, 255, 0.3)",
+            borderRadius: "50%",
+            boxShadow: isValid
+              ? `0 4px 15px ${inputValue}44, 0 0 0 ${justChanged ? "8px" : "0px"} ${inputValue}33`
+              : "0 4px 15px rgba(0,0,0,0.2)",
+            transition:
+              "all 0.3s ease, background-color 0.5s ease, box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+            transform: justChanged ? "scale(1.15)" : "scale(1)",
+            backdropFilter: "blur(5px)",
+            marginRight: "12px",
+            cursor: "pointer",
+            flexShrink: 0,
+          }}
+          onMouseEnter={(e) => {
+            if (!justChanged) {
+              e.currentTarget.style.transform = "scale(1.05)";
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!justChanged) {
+              e.currentTarget.style.transform = "scale(1)";
+            }
+          }}
+        />
 
-          <Form.Control
-            type="text"
-            placeholder="#000000"
-            value={inputValue}
-            onChange={handleInputChange}
-            isInvalid={!isValid}
-            style={{
-              fontSize: "14px",
-              fontFamily: "monospace",
-              textTransform: "uppercase",
-              fontWeight: "bold",
-              background: "rgba(255, 255, 255, 0.2)",
-              backdropFilter: "blur(5px)",
-              WebkitBackdropFilter: "blur(5px)",
-              border: "1px solid rgba(255, 255, 255, 0.3)",
-              borderRadius: "12px",
-              color: "#000",
-              transition: "all 0.3s ease, color 0.4s ease",
-              boxShadow: "inset 0 2px 4px rgba(0, 0, 0, 0.06)",
-              padding: "8px 12px",
-            }}
-            onFocus={(e) => {
-              e.target.style.background = "rgba(255, 255, 255, 0.3)";
-              e.target.style.border = "1px solid rgba(255, 255, 255, 0.5)";
-              e.target.style.boxShadow = `0 0 0 3px ${inputValue}33`;
-            }}
-            onBlur={(e) => {
-              e.target.style.background = "rgba(255, 255, 255, 0.2)";
-              e.target.style.border = "1px solid rgba(255, 255, 255, 0.3)";
-              e.target.style.boxShadow = "inset 0 2px 4px rgba(0, 0, 0, 0.06)";
-            }}
-          />
-        </InputGroup>
+        <Input
+          type="text"
+          placeholder="#000000"
+          value={inputValue}
+          onChange={handleInputChange}
+          aria-invalid={!isValid}
+          className="h-8"
+          style={{
+            fontSize: "14px",
+            fontFamily: "monospace",
+            textTransform: "uppercase",
+            fontWeight: "bold",
+            background: "rgba(255, 255, 255, 0.2)",
+            backdropFilter: "blur(5px)",
+            WebkitBackdropFilter: "blur(5px)",
+            border: "1px solid rgba(255, 255, 255, 0.3)",
+            borderRadius: "12px",
+            color: "#000",
+            transition: "all 0.3s ease, color 0.4s ease",
+            boxShadow: "inset 0 2px 4px rgba(0, 0, 0, 0.06)",
+            padding: "8px 12px",
+          }}
+          onFocus={(e) => {
+            e.currentTarget.style.background = "rgba(255, 255, 255, 0.3)";
+            e.currentTarget.style.border = "1px solid rgba(255, 255, 255, 0.5)";
+            e.currentTarget.style.boxShadow = `0 0 0 3px ${inputValue}33`;
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.background = "rgba(255, 255, 255, 0.2)";
+            e.currentTarget.style.border = "1px solid rgba(255, 255, 255, 0.3)";
+            e.currentTarget.style.boxShadow = "inset 0 2px 4px rgba(0, 0, 0, 0.06)";
+          }}
+        />
 
         {/* Color Picker Popup */}
         {showPicker && (
@@ -245,21 +241,21 @@ function ColorSelector({ selectedColor, onColorSelect }) {
             transform: translateX(-50%) translateY(0);
           }
         }
-        
+
         .react-colorful {
           border-radius: 12px;
         }
-        
+
         .react-colorful__saturation {
           border-radius: 12px 12px 0 0;
         }
-        
+
         .react-colorful__hue {
           border-radius: 8px;
           height: 20px;
           margin-top: 12px;
         }
-        
+
         .react-colorful__pointer {
           width: 20px;
           height: 20px;
