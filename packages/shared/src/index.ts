@@ -81,6 +81,15 @@ export const CreateSessionResponseSchema = z.object({
 });
 export type CreateSessionResponse = z.infer<typeof CreateSessionResponseSchema>;
 
+/** POST /api/boards */
+export const CreateBoardRequestSchema = z.object({
+  name: z.string().min(1),
+  /** Building boundary polygon vertices, in order. */
+  coords: z.array(LatLonSchema).min(3),
+  size: BoardSizeSchema,
+});
+export type CreateBoardRequest = z.infer<typeof CreateBoardRequestSchema>;
+
 /** PATCH /api/boards/:name/pixels */
 export const UpdatePixelsRequestSchema = z.object({
   pixels: z.array(PixelUpdateSchema).min(1),

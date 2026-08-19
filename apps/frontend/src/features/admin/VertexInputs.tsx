@@ -23,7 +23,7 @@ export function VertexInputs({ control }: VertexInputsProps) {
                 <FormControl>
                   <Input
                     type="number"
-                    step="0.0001"
+                    step="0.01"
                     placeholder="43.073051"
                     value={vertex.latitude}
                     onChange={(e) => update(index, { ...vertex, latitude: e.target.value })}

@@ -2,10 +2,10 @@ import { z } from "zod";
 import {
   type Board,
   BoardSchema,
-  type BoardSize,
   type BoardSummary,
   BoardSummarySchema,
   type Color,
+  type CreateBoardRequest,
   type CreateSessionResponse,
   CreateSessionResponseSchema,
   type LatLon,
@@ -13,12 +13,6 @@ import {
 } from "@badger/shared";
 import { ADMIN_KEY_HEADER } from "../config";
 import { api, validate } from "./apiClient";
-
-export type CreateBoardRequest = {
-  name: string;
-  coords: LatLon[];
-  size: BoardSize;
-};
 
 export async function createSession(coords: LatLon): Promise<CreateSessionResponse> {
   const { data } = await api.post("/sessions", { coords });
