@@ -1,4 +1,3 @@
-# STAGE 1: Build the React App
 FROM node:24-alpine AS build
 RUN corepack enable
 WORKDIR /repo
