@@ -6,11 +6,8 @@ COPY package.json pnpm-workspace.yaml pnpm-lock.yaml tsconfig.base.json ./
 COPY apps/frontend/package.json apps/frontend/package.json
 COPY apps/api/package.json apps/api/package.json
 COPY apps/infra/package.json apps/infra/package.json
-COPY packages/shared/package.json packages/shared/package.json
 RUN pnpm install --frozen-lockfile
 COPY apps/frontend apps/frontend
-COPY packages/shared packages/shared
-RUN pnpm --filter @badger/shared build
 RUN pnpm --filter @badger/frontend build
 
 # STAGE 2: Serve with Nginx
