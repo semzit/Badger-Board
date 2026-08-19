@@ -1,4 +1,4 @@
-import { WsUpdateMessageSchema } from "@badger/shared";
+import { WsUpdateMessageSchema } from "../schemas";
 import { getBoardMeta } from "../redis/boardRepository";
 import { incrementUpdates, setPixels } from "../redis/boardRepository";
 import { publishBoardUpdate } from "../redis/pubsub";

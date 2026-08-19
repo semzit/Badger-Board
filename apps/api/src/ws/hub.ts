@@ -1,6 +1,6 @@
 import { Server as HttpServer } from "node:http";
 import Redis from "ioredis";
-import { WsClientMessageSchema, WsUpdateMessage } from "@badger/shared";
+import { WsClientMessageSchema, WsUpdateMessage } from "../schemas";
 import { WebSocket, WebSocketServer } from "ws";
 import { config } from "../config";
 import { boardChannel } from "../redis/pubsub";

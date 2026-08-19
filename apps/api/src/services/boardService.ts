@@ -1,4 +1,4 @@
-import { Board, BoardSize, BoardSummary, LatLon } from "@badger/shared";
+import { Board, BoardSize, BoardSummary, LatLon } from "../schemas";
 import * as repo from "../redis/boardRepository";
 import { BoardMeta } from "../redis/boardRepository";
 

@@ -1,4 +1,4 @@
-import { Board, BoardSize, LatLon } from "@badger/shared";
+import { Board, BoardSize, LatLon } from "../schemas";
 import { getRedis } from "./client";
 
 const metaKey = (name: string): string => `board:${name}:meta`;

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { CreateSessionRequestSchema } from "@badger/shared";
+import { CreateSessionRequestSchema } from "../schemas";
 import { createSession } from "../controllers/sessionController";
 import { validate } from "../middleware/validate";
 

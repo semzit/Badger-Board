@@ -14,7 +14,7 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN pnpm --filter @badger/shared build && pnpm --filter @badger/api build
+RUN pnpm --filter @badger/api build
 
 ENV PORT=8080
 

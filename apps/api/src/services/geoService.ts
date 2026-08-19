@@ -1,4 +1,4 @@
-import { LatLon } from "@badger/shared";
+import { LatLon } from "../schemas";
 import { insidePolygon } from "geolocation-utils";
 
 /**

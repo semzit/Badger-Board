@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { CreateBoardRequestSchema, UpdatePixelsRequestSchema } from "@badger/shared";
+import { CreateBoardRequestSchema, UpdatePixelsRequestSchema } from "../schemas";
 import {
   createBoard,
   deleteBoard,

@@ -6,7 +6,7 @@
   "author": "Semo Zitouni",
   "license": "MIT",
   "scripts": {
-    "build": "pnpm --filter @badger/shared build && tsc",
+    "build": "tsc",
     "start": "node build/server.js",
     "dev": "tsx watch src/server.ts",
     "lint": "oxlint .",

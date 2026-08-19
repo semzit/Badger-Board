@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { CreateSessionRequest, CreateSessionResponseSchema } from "@badger/shared";
+import { CreateSessionRequest, CreateSessionResponseSchema } from "../schemas";
 import { createSession as createSessionForCoords } from "../services/sessionService";
 
 export const createSession = async (

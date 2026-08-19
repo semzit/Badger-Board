@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { CreateBoardRequest, UpdatePixelsRequest } from "@badger/shared";
+import { CreateBoardRequest, UpdatePixelsRequest } from "../schemas";
 import {
   createBoard as createBoardService,
   deleteBoard as deleteBoardService,
