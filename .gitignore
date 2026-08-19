@@ -12,7 +12,6 @@ apps/frontend/docs/
 # environment
 .env
 .env.*
-!.env.example
 
 # logs
 *.log

@@ -34,12 +34,12 @@ export function RemoveBuildingForm({
           />
           <FormField
             control={removeForm.control}
-            name="adminKey"
+            name="adminPassword"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Admin Key</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="Admin key" {...field} />
+                  <Input type="password" placeholder="Admin password" {...field} />
                 </FormControl>
               </FormItem>
             )}

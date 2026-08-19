@@ -8,4 +8,4 @@ function readEnv(key: string): string | undefined {
 
 export const API_BASE_URL = readEnv("VITE_API_BASE_URL") ?? "/api";
 
-export const ADMIN_KEY_HEADER = "x-admin-key";
+export const ADMIN_PASSWORD_HEADER = "x-admin-password";

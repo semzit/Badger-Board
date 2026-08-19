@@ -8,7 +8,7 @@ export const coordinateSchema = z.object({
 
 export const createBoardSchema = z.object({
   name: z.string().min(1, "Building name is required"),
-  adminKey: z.string().min(1, "Admin key is required"),
+  adminPassword: z.string().min(1, "Admin password is required"),
   width: z.coerce.number().int().positive().default(100),
   height: z.coerce.number().int().positive().default(100),
   vertices: z.array(coordinateSchema).length(4, "Provide exactly 4 building corners"),
@@ -16,12 +16,12 @@ export const createBoardSchema = z.object({
 
 export const removeBoardSchema = z.object({
   name: z.string().min(1, "Building name is required"),
-  adminKey: z.string().min(1, "Admin key is required"),
+  adminPassword: z.string().min(1, "Admin password is required"),
 });
 
 export type AddFormValues = {
   name: string;
-  adminKey: string;
+  adminPassword: string;
   width: string;
   height: string;
   vertices: { latitude: string; longitude: string }[];
@@ -29,12 +29,12 @@ export type AddFormValues = {
 
 export type RemoveFormValues = {
   name: string;
-  adminKey: string;
+  adminPassword: string;
 };
 
 export const addFormDefaults: AddFormValues = {
   name: "",
-  adminKey: "",
+  adminPassword: "",
   width: "100",
   height: "100",
   vertices: emptyVertices(),
@@ -42,5 +42,5 @@ export const addFormDefaults: AddFormValues = {
 
 export const removeFormDefaults: RemoveFormValues = {
   name: "",
-  adminKey: "",
+  adminPassword: "",
 };

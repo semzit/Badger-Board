@@ -62,18 +62,18 @@ pnpm dev
 Environment variables are optional for local dev (sensible defaults are provided). Copy an example file to opt in:
 
 ```bash
-cp apps/api/.env.example apps/api/.env
-cp apps/frontend/.env.example apps/frontend/.env
+cp apps/api/.example.env apps/api/.env
+cp apps/frontend/.example.env apps/frontend/.env
 ```
 
-| Variable              | Default                  | App      | Description                                                               |
-| --------------------- | ------------------------ | -------- | ------------------------------------------------------------------------- |
-| `PORT`                | `8080`                   | api      | HTTP port the API listens on                                              |
-| `REDIS_URL`           | `redis://localhost:6379` | api      | Redis connection string                                                   |
-| `ADMIN_KEY`           | _(empty)_                | api      | Authorizes admin endpoints (`x-admin-key` header); leave empty to disable |
-| `FRONTEND_URL`        | `http://localhost`       | api      | CORS origin allowed for the browser frontend                              |
-| `SESSION_TTL_SECONDS` | `600`                    | api      | Session TTL in seconds                                                    |
-| `VITE_API_BASE_URL`   | `/api`                   | frontend | API base URL (use `/api` with the dev proxy)                              |
+| Variable              | Default                  | App      | Description                                                                                                                                                                |
+| --------------------- | ------------------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PORT`                | `8080`                   | api      | HTTP port the API listens on                                                                                                                                               |
+| `REDIS_URL`           | `redis://localhost:6379` | api      | Redis connection string                                                                                                                                                    |
+| `ADMIN_PASSWORD`      | _(empty)_                | api      | Shared secret for admin actions (create/delete board), entered in the admin site's "Admin password" field (`x-admin-password` header); leave empty to disable admin routes |
+| `FRONTEND_URL`        | `http://localhost`       | api      | CORS origin allowed for the browser frontend                                                                                                                               |
+| `SESSION_TTL_SECONDS` | `600`                    | api      | Session TTL in seconds                                                                                                                                                     |
+| `VITE_API_BASE_URL`   | `/api`                   | frontend | API base URL (use `/api` with the dev proxy)                                                                                                                               |
 
 ## Common Commands
 
