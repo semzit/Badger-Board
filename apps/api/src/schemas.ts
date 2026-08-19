@@ -58,17 +58,6 @@ export const CreateSessionResponseSchema = z.object({
   sessionId: z.string().uuid(),
   building: z.string().min(1),
 });
-<<<<<<<< HEAD:apps/frontend/src/schemas.ts
-
-/** POST /api/boards */
-export const CreateBoardRequestSchema = z.object({
-  name: z.string().min(1),
-  /** Building boundary polygon vertices, in order. */
-  coords: z.array(LatLonSchema).min(3),
-  size: BoardSizeSchema,
-});
-========
->>>>>>>> 387decb (refactor: remove @badger/shared, move schemas into apps):apps/api/src/schemas.ts
 
 /** POST /api/boards */
 export const CreateBoardRequestSchema = z.object({
