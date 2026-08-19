@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { emptyVertices } from "@badger-board/lib/board";
 
 export const coordinateSchema = z.object({
   latitude: z.coerce.number().min(-90).max(90, "Latitude must be between -90 and 90"),
@@ -29,4 +30,17 @@ export type AddFormValues = {
 export type RemoveFormValues = {
   name: string;
   adminKey: string;
+};
+
+export const addFormDefaults: AddFormValues = {
+  name: "",
+  adminKey: "",
+  width: "100",
+  height: "100",
+  vertices: emptyVertices(),
+};
+
+export const removeFormDefaults: RemoveFormValues = {
+  name: "",
+  adminKey: "",
 };
