@@ -181,9 +181,6 @@ importers:
       globals:
         specifier: ^16.5.0
         version: 16.5.0
-      tsx:
-        specifier: ^4.23.12
-        version: 4.23.12
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
@@ -8484,6 +8481,7 @@ snapshots:
       esbuild: 0.28.2
     optionalDependencies:
       fsevents: 2.3.3
+    optional: true
 
   tunnel-agent@0.6.0:
     dependencies:
