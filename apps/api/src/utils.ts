@@ -1,4 +1,4 @@
-import { BoardSize, BoardSummary } from "../schemas";
+import { BoardSize, BoardSummary } from "./schemas";
 
 export const WHITE = "#ffffff";
 
