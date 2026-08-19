@@ -1,5 +1,5 @@
 # STAGE 1: Build the React App
-FROM node:20-alpine AS build
+FROM node:24-alpine AS build
 RUN corepack enable
 WORKDIR /repo
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml tsconfig.base.json ./
