@@ -29,9 +29,6 @@ importers:
 
   apps/api:
     dependencies:
-      '@badger/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
       '@types/ws':
         specifier: ^8.18.1
         version: 8.18.1
@@ -81,9 +78,6 @@ importers:
 
   apps/frontend:
     dependencies:
-      '@badger/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
       '@base-ui/react':
         specifier: ^1.7.0
         version: 1.7.0(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -217,16 +211,6 @@ importers:
         version: 10.9.2(@types/node@24.13.3)(typescript@5.9.3)
       typescript:
         specifier: ~5.9.3
-        version: 5.9.3
-
-  packages/shared:
-    dependencies:
-      zod:
-        specifier: ^4.4.3
-        version: 4.4.3
-    devDependencies:
-      typescript:
-        specifier: ^5.9.3
         version: 5.9.3
 
 packages:
