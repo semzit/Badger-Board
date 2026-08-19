@@ -10,7 +10,7 @@ import {
   CreateSessionResponseSchema,
   type LatLon,
   type PixelUpdate,
-} from "@badger/shared";
+} from "../schemas";
 import { ADMIN_KEY_HEADER } from "../config";
 import { api, validate } from "./apiClient";
 

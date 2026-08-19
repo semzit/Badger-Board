@@ -1,6 +1,6 @@
 import { create, isAxiosError } from "axios";
 import { z } from "zod";
-import type { ApiError } from "@badger/shared";
+import type { ApiError } from "../schemas";
 import { API_BASE_URL } from "../config";
 
 export type ApiErrorLike = ApiError & { status?: number };

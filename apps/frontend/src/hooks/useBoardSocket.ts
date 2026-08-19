@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { WsPaintMessageSchema, WsServerMessageSchema, type WsUpdateMessage } from "@badger/shared";
+import { WsPaintMessageSchema, WsServerMessageSchema, type WsUpdateMessage } from "../schemas";
 
 function buildSocketUrl(): string {
   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";

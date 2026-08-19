@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import type { Color, WsUpdateMessage } from "@badger/shared";
+import type { Color, WsUpdateMessage } from "../schemas";
 
 type Ripple = { index: number; id: string };
 

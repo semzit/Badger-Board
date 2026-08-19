@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "pnpm -r build",
-    "dev": "pnpm --filter @badger/shared build && pnpm -r --parallel --filter '!@badger/shared' dev",
+    "dev": "pnpm -r --parallel dev",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "pnpm -r --if-present lint",

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
-import type { LatLon } from "@badger/shared";
+import type { LatLon } from "../schemas";
 import { createSession, getBoard } from "@badger-board/lib/api";
 import { isApiError } from "@badger-board/lib/apiClient";
 

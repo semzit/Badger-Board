@@ -12,13 +12,7 @@ export default defineConfig({
     },
   },
   base: "/",
-  optimizeDeps: {
-    include: ["@badger/shared"],
-  },
   build: {
     outDir: "docs",
-    commonjsOptions: {
-      include: [/node_modules/, /@badger[\\/]shared/, /packages[\\/]shared/],
-    },
   },
 });
