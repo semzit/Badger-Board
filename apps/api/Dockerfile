@@ -1,22 +1,23 @@
-FROM node:20-slim AS build
+FROM node:24-slim AS build
 
-WORKDIR /backend
+WORKDIR /app
 
-COPY package.json yarn.lock ./
+RUN corepack enable
 
-RUN yarn install --frozen-lockfile
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
+COPY packages/shared/package.json packages/shared/
+COPY apps/api/package.json apps/api/
+COPY apps/frontend/package.json apps/frontend/
+COPY apps/infra/package.json apps/infra/
+
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN yarn build
+RUN pnpm --filter @badger/api build
 
-ENV RESTPORT=8080
-ENV WSPORT=8081
+ENV PORT=8080
 
 EXPOSE 8080
-EXPOSE 8081
 
-CMD [ "yarn", "start" ] 
-
-
-
+CMD ["node", "apps/api/build/server.js"]

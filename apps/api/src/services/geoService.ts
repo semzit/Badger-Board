@@ -1,12 +1,8 @@
-import { LatLon, insidePolygon } from "geolocation-utils";
-import { coords } from "../types/types";
+import { LatLon } from "../schemas";
+import { insidePolygon } from "geolocation-utils";
 
 /**
- * Validate coords fit inside of the building
- * @param cords
- * @param coords2
- * @returns
+ * Check whether a coordinate lies inside the given polygon vertices.
  */
-export const validCoords = (cords: LatLon, coords2: coords) => {
-  return insidePolygon(cords, coords2);
-};
+export const isInsidePolygon = (point: LatLon, polygon: LatLon[]): boolean =>
+  insidePolygon(point, polygon);

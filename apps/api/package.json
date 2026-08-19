@@ -8,27 +8,30 @@
   "scripts": {
     "build": "tsc",
     "start": "node build/server.js",
-    "dev": "ts-node src/server.ts",
+    "dev": "tsx watch src/server.ts",
     "lint": "oxlint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@types/ws": "^8.18.1",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "geolocation-utils": "^1.2.6",
-    "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7",
-    "websocket": "^1.0.35",
-    "ws": "^8.18.3"
+    "ioredis": "^5.7.0",
+    "ws": "^8.18.3",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
     "@types/node": "^24.10.1",
-    "@types/sqlite3": "^5.1.0",
-    "nodemon": "^3.1.11",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "@types/supertest": "^6.0.3",
+    "@types/ioredis-mock": "^8.2.8",
+    "ioredis-mock": "^8.9.0",
+    "supertest": "^7.1.4",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
   }
 }

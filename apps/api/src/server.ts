@@ -1,36 +1,38 @@
+import { createServer } from "node:http";
 import { app } from "./app";
-import { buildDb, loadBoard, readDb } from "./services/dbService";
-import { setBuilding } from "./services/boardManager";
-import { start } from "./ws/ws";
+import { config } from "./config";
+import { createRedis, setRedis } from "./redis/client";
+import { Hub } from "./ws/hub";
 
-const RESTPORT: number = Number(process.env.RESTPORT) || 8080;
+async function main(): Promise<void> {
+  const redis = createRedis();
+  setRedis(redis);
+  await redis.connect();
 
-app.listen(RESTPORT, () => {
-  console.log(`Server running on port ${RESTPORT}`);
-});
+  const server = createServer(app);
+  const hub = new Hub(server);
+  await hub.start();
 
-async function main() {
-  try {
-    await buildDb();
+  server.listen(config.port, () => {
+    console.log(`Badger API listening on port ${config.port}`);
+  });
 
-    const boards = await readDb();
+  const shutdown = (signal: string) => {
+    console.log(`Received ${signal}, shutting down`);
+    server.close(() => {
+      void (async () => {
+        await hub.close();
+        await redis.quit();
+        process.exit(0);
+      })();
+    });
+  };
 
-    // from the db enter all data into board manager
-    for (let i = 0; i < boards.length; i++) {
-      const { location } = boards[i];
-      setBuilding(location, boards[i]);
-    }
-
-    start();
-
-    const boardInit = Array(100)
-      .fill(0)
-      .map(() => Array(100).fill(0));
-
-    loadBoard("test", boardInit, boardInit);
-  } catch (err) {
-    console.error(err);
-  }
+  process.on("SIGINT", () => shutdown("SIGINT"));
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
 }
 
-main();
+main().catch((err) => {
+  console.error("Failed to start server:", err);
+  process.exit(1);
+});
