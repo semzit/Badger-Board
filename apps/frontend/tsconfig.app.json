@@ -20,7 +20,7 @@
     "noUncheckedSideEffectImports": true,
     "types": ["vite/client"],
     "paths": {
-      "@/*": ["./src/*"]
+      "@badger-board/*": ["./src/*"]
     }
   },
   "include": ["src"]

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { HexColorPicker } from "react-colorful";
-import { Input } from "@/components/ui/input";
+import { Input } from "@badger-board/components/ui/input";
 
 type ColorSelectorProps = {
   selectedColor: string;

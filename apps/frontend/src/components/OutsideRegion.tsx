@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getBoards } from "@/lib/api";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getBoards } from "@badger-board/lib/api";
+import { Alert, AlertDescription } from "@badger-board/components/ui/alert";
+import { Card, CardContent, CardHeader, CardTitle } from "@badger-board/components/ui/card";
 
 function OutsideRegion() {
   const {

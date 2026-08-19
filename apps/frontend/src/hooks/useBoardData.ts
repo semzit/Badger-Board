@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import type { LatLon } from "@badger/shared";
-import { createSession, getBoard, isApiError } from "@/lib/api";
+import { createSession, getBoard, isApiError } from "@badger-board/lib/api";
 
 function getCurrentPosition(): Promise<LatLon> {
   return new Promise((resolve, reject) => {
