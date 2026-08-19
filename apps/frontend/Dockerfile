@@ -10,9 +10,7 @@ COPY apps/frontend apps/frontend
 RUN pnpm --filter @badger/frontend build
 
 FROM nginx:stable-alpine
-# Copy the compiled files from the build stage
 COPY --from=build /repo/apps/frontend/docs /usr/share/nginx/html
-# Copy your custom Nginx config (we made this earlier)
 COPY apps/frontend/nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
