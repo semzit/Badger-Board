@@ -18,7 +18,7 @@ The Vite dev server runs on http://localhost:5173 and proxies `/api` and `/ws` t
 Frontend env vars are loaded by Vite from `apps/frontend/.env` (any `VITE_`-prefixed variable). Copy the example to opt in:
 
 ```bash
-cp apps/frontend/.env.example apps/frontend/.env
+cp apps/frontend/.example.env apps/frontend/.env
 ```
 
 | Variable            | Default | Description                                 |

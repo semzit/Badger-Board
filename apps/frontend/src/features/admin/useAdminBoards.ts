@@ -46,7 +46,7 @@ export function useAdminBoards() {
           coords: parsed.data.vertices,
           size: { width: parsed.data.width, height: parsed.data.height },
         },
-        parsed.data.adminKey,
+        parsed.data.adminPassword,
       );
       setStatus({ type: "success", message: "Building added successfully!" });
       addForm.reset();
@@ -67,7 +67,7 @@ export function useAdminBoards() {
     setIsSubmitting(true);
     setStatus(null);
     try {
-      await deleteBoard(parsed.data.name, parsed.data.adminKey);
+      await deleteBoard(parsed.data.name, parsed.data.adminPassword);
       setStatus({ type: "success", message: "Building removed successfully!" });
       removeForm.reset();
     } catch (error) {

@@ -16,7 +16,7 @@ import { Construct } from "constructs";
 export interface StaticSiteProps {
   domainName: string;
   siteSubDomain: string;
-  adminKey: string;
+  adminPassword: string;
 }
 
 export class InfraStack extends Construct {
@@ -69,7 +69,7 @@ export class InfraStack extends Construct {
 
     backendContainer.addEnvironment("FRONTEND_URL", "https://" + siteDomain);
     backendContainer.addEnvironment("REDIS_URL", `redis://${redis.attrRedisEndpointAddress}:6379`);
-    backendContainer.addEnvironment("ADMIN_KEY", props.adminKey);
+    backendContainer.addEnvironment("ADMIN_PASSWORD", props.adminPassword);
 
     const service = new ecsp.ApplicationLoadBalancedFargateService(this, "BadgerBoardService", {
       cluster: cluster,

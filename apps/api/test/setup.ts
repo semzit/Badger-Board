@@ -1,1 +1,1 @@
-process.env.ADMIN_KEY = "test-admin-key";
+process.env.ADMIN_PASSWORD = "test-admin-key";

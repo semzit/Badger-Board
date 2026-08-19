@@ -11,7 +11,7 @@ import {
   type LatLon,
   type PixelUpdate,
 } from "../schemas";
-import { ADMIN_KEY_HEADER } from "../config";
+import { ADMIN_PASSWORD_HEADER } from "../config";
 import { api, validate } from "./apiClient";
 
 export async function createSession(coords: LatLon): Promise<CreateSessionResponse> {
@@ -38,12 +38,12 @@ export async function patchPixels(name: string, pixels: PixelUpdate[]): Promise<
   await api.patch(`/boards/${encodeURIComponent(name)}/pixels`, { pixels });
 }
 
-export async function createBoard(input: CreateBoardRequest, adminKey: string): Promise<void> {
-  await api.post("/boards", input, { headers: { [ADMIN_KEY_HEADER]: adminKey } });
+export async function createBoard(input: CreateBoardRequest, adminPassword: string): Promise<void> {
+  await api.post("/boards", input, { headers: { [ADMIN_PASSWORD_HEADER]: adminPassword } });
 }
 
-export async function deleteBoard(name: string, adminKey: string): Promise<void> {
+export async function deleteBoard(name: string, adminPassword: string): Promise<void> {
   await api.delete(`/boards/${encodeURIComponent(name)}`, {
-    headers: { [ADMIN_KEY_HEADER]: adminKey },
+    headers: { [ADMIN_PASSWORD_HEADER]: adminPassword },
   });
 }

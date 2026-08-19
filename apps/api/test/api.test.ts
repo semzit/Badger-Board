@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { app } from "../src/app";
 import { setRedis } from "../src/redis/client";
 
-const ADMIN_KEY = "test-admin-key";
+const ADMIN_PASSWORD = "test-admin-key";
 
 const coords = [
   { latitude: -1, longitude: -1 },
@@ -17,7 +17,7 @@ const coords = [
 const createBoard = (name = "tower-a") =>
   request(app)
     .post("/api/boards")
-    .set("x-admin-key", ADMIN_KEY)
+    .set("x-admin-password", ADMIN_PASSWORD)
     .send({ name, coords, size: { width: 2, height: 2 } });
 
 describe("API", () => {
@@ -168,7 +168,9 @@ describe("API", () => {
     it("DELETE /api/boards/:name removes the board", async () => {
       await createBoard("tower-a");
 
-      const res = await request(app).delete("/api/boards/tower-a").set("x-admin-key", ADMIN_KEY);
+      const res = await request(app)
+        .delete("/api/boards/tower-a")
+        .set("x-admin-password", ADMIN_PASSWORD);
       expect(res.status).toBe(204);
       expect(await redis.exists("board:tower-a:meta")).toBe(0);
     });

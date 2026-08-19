@@ -20,11 +20,11 @@ AWS CDK stack for Badger Board. Provisioned with TypeScript.
 
 Pass values via CDK context flags, or add them to `cdk.json` under `"context"`:
 
-| Context / env                   | Description                                              |
-| ------------------------------- | -------------------------------------------------------- |
-| `-c domain=...`                 | Route 53 hosted zone domain                              |
-| `-c subdomain=...`              | Site subdomain (e.g. `www`)                              |
-| `-c adminKey=...` / `ADMIN_KEY` | Secret for admin endpoints (empty disables admin routes) |
+| Context / env                             | Description                                              |
+| ----------------------------------------- | -------------------------------------------------------- |
+| `-c domain=...`                           | Route 53 hosted zone domain                              |
+| `-c subdomain=...`                        | Site subdomain (e.g. `www`)                              |
+| `-c adminPassword=...` / `ADMIN_PASSWORD` | Secret for admin endpoints (empty disables admin routes) |
 
 ## Commands
 

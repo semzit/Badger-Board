@@ -65,12 +65,16 @@ export function AddBuildingForm({ addForm, handleAdd, isSubmitting }: AddBuildin
 
         <FormField
           control={addForm.control}
-          name="adminKey"
+          name="adminPassword"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Admin Key</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Admin key for board management" {...field} />
+                <Input
+                  type="password"
+                  placeholder="Admin password for board management"
+                  {...field}
+                />
               </FormControl>
             </FormItem>
           )}
