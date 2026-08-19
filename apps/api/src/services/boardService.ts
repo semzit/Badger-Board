@@ -1,7 +1,7 @@
 import { Board, BoardSize, BoardSummary, LatLon } from "../schemas";
 import * as repo from "../redis/boardRepository";
 import { BoardMeta } from "../redis/boardRepository";
-import { hydrateDrawing, metaToSummary } from "../lib/board";
+import { hydrateDrawing, metaToSummary } from "../utils";
 
 export class BoardNotFoundError extends Error {
   constructor(name: string) {
