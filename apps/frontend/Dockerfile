@@ -9,7 +9,6 @@ RUN pnpm install --frozen-lockfile
 COPY apps/frontend apps/frontend
 RUN pnpm --filter @badger/frontend build
 
-# STAGE 2: Serve with Nginx
 FROM nginx:stable-alpine
 # Copy the compiled files from the build stage
 COPY --from=build /repo/apps/frontend/docs /usr/share/nginx/html
